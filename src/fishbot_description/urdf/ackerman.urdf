@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<robot name="ackerman">
+    
+  <!-- base link -->
+  <link name="base_link">
+  	<visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+		<cylinder length="0.0" radius="0.0"/>
+      </geometry>
+      <material name="blue">
+      	<color rgba="0.1 0.1 1.0 0.5" /> 
+      </material>
+    </visual>
+  </link>
+  
+  <!-- chassis link -->
+  <link name="chassis_link">
+  	<visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+		<box size="0.2 0.08 0.03" />
+      </geometry>
+      <material name="blue">
+      	<color rgba="0.1 0.1 1.0 0.5" />
+      </material>
+    </visual>
+  </link>
+    
+  <!-- chassis joint -->
+  <joint name="chassis_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="chassis_link" />
+      <origin xyz="0.08 0 0.02" />
+  </joint>
+
+  <!-- laser link -->
+  <link name="laser_link">
+  	<visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+		<cylinder length="0.033" radius="0.019"/>
+      </geometry>
+      <material name="black">
+      	<color rgba="0.0 0.0 0.0 0.5" /> 
+      </material>
+    </visual>
+  </link>
+    
+  <!-- laser joint -->
+  <joint name="laser_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="laser_link" />
+      <origin xyz="0.015 0 0.11" />
+  </joint>
+
+  <link name="imu_link">
+  	<visual>
+      <origin xyz="0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+		    <box size="0.02 0.02 0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- imu joint -->
+  <joint name="imu_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="imu_link" />
+      <origin xyz="0.09 0 0.068" />
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size="0.04 0.16 0.03" />
+      </geometry>
+      <material name="white">
+        <color rgba="1.0 1.0 1.0 0.5" /> 
+      </material>
+    </visual>
+  </link>
+
+  <joint name="camera_link_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="camera_link" />
+    <origin rpy="0 0 0" xyz="0.114 0 0.09" />
+  </joint>
+
+  <link name="sonar_link">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size="0.013 0.045 0.016" />
+      </geometry>
+      <material name="white">
+        <color rgba="1.0 1.0 1.0 0.5" /> 
+      </material>
+    </visual>
+  </link>
+
+  <joint name="sonar_link_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="sonar_link" />
+    <origin rpy="0 0 0" xyz="0.2 0 0.052" />
+  </joint>
+
+  <link name="tof_link">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size="0.0036 0.025 0.01" />
+      </geometry>
+      <material name="white">
+        <color rgba="1.0 1.0 1.0 0.5" /> 
+      </material>
+    </visual>
+  </link>
+
+  <joint name="tof_link_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="tof_link" />
+    <origin rpy="0 0 3.14" xyz="-0.01 0 0.078" />
+  </joint>
+
+  <link name="front_left_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+        <geometry>
+          <cylinder length="0.026" radius="0.032"/>
+        </geometry>
+          <material name="black">
+            <color rgba="0.0 0.0 0.0 0.5" /> 
+          </material>
+      </visual>
+  </link>
+    
+  <joint name="front_left_wheel_joint" type="continuous">
+      <parent link="base_link" />
+      <child link="front_left_wheel_link" />
+      <origin xyz="0.137 0.06 0.032" />
+      <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="back_left_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+        <geometry>
+          <cylinder length="0.026" radius="0.032"/>
+        </geometry>
+          <material name="black">
+            <color rgba="0.0 0.0 0.0 0.5" /> 
+          </material>
+      </visual>
+  </link>
+    
+  <joint name="back_left_wheel_joint" type="continuous">
+      <parent link="base_link" />
+      <child link="back_left_wheel_link" />
+      <origin xyz="0.0 0.06 0.032" />
+      <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="front_right_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+        <geometry>
+          <cylinder length="0.026" radius="0.032"/>
+        </geometry>
+          <material name="black">
+            <color rgba="0.0 0.0 0.0 0.5" /> 
+          </material>
+      </visual>
+  </link>
+    
+  <joint name="front_right_wheel_joint" type="continuous">
+      <parent link="base_link" />
+      <child link="front_right_wheel_link" />
+      <origin xyz="0.137 -0.06 0.032" />
+      <axis xyz="0 1 0" />
+  </joint>
+
+  <link name="back_right_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+        <geometry>
+          <cylinder length="0.026" radius="0.032"/>
+        </geometry>
+          <material name="black">
+            <color rgba="0.0 0.0 0.0 0.5" /> 
+          </material>
+      </visual>
+  </link>
+    
+  <joint name="back_right_wheel_joint" type="continuous">
+      <parent link="base_link" />
+      <child link="back_right_wheel_link" />
+      <origin xyz="0.0 -0.06 0.032" />
+      <axis xyz="0 1 0" />
+  </joint>
+
+</robot>

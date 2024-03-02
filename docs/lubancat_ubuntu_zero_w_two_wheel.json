@@ -1,0 +1,77 @@
+{
+    "chip": "Two-wheel",
+    "bts7960_lis": -1,
+    "bts7960_ris": -1,
+    "moto1_ena": "moto1-ena",
+    "moto1_enb": "moto1-enb",
+    "moto2_ena": "moto2-ena",
+    "moto2_enb": "moto2-enb",
+    "sbus": "/dev/ttyS4",
+    "i2c": "/dev/i2c-5",
+    "lidar_comm": "/dev/ttyS8",
+    "joystick": "/dev/input/js0",
+    "keyboard": "/dev/input/event5",
+    "video": {
+        "format": "YUV",
+        "width": 640,
+        "height": 480,
+        "fps": 30
+    },
+    "distance": {
+        "srf04" : false,
+        "vl53l0x": false
+    },
+    "rotary_left":{
+        "device": "/dev/input/event0",
+        "reduction_ratio": 46.8,
+        "precision": 1.0
+    },
+    "rotary_right":{
+        "device": "/dev/input/event1",
+        "reduction_ratio": 46.8,
+        "precision": 1.0
+    },
+    "lidar_pwm": {
+        "chip": 3,
+        "channel": 0,
+        "polarity": true,
+        "period": 10000000,
+        "dutycycle": 8500000
+    },
+    "moto_pwm_left": {
+        "chip": 1,
+        "channel": 0,
+        "polarity": true,
+        "period": 40000,
+        "dutycycle": 0
+    },
+    "moto_pwm_right": {
+        "chip": 2,
+        "channel": 0,
+        "polarity": true,
+        "period": 40000,
+        "dutycycle": 0
+    },
+    "yaml": {
+        "RotaryEncoder": [
+            "/dev/input/event2",
+            "/dev/input/event1"
+        ],
+        "LeftWheelRadius": 0.0315,
+        "RightWheelRadius": 0.0315,
+        "TrendLength": 0.15,
+        "WheelBase": 0.1,
+        "Ticks1Roll": 224.1,
+        "MaxXVel": 0.389079,
+        "MaxWVel": 5.18772,
+        "MaxAngle": 0.758,
+        "ZeroAngle": 0.0,
+        "MaxXAcc": 0.5,
+        "MaxWAcc": 0.5,
+        "MaxAngerLimit" : 0.785399,
+        "MinAngerLimit" : -0.785399,
+        "Proportion": 0.625,
+        "Integration":0.125,
+        "Differentiation": 0.0
+    }
+}

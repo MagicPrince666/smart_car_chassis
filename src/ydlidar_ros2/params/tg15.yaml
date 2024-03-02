@@ -1,0 +1,17 @@
+ydlidar_node:
+  ros__parameters:
+    port: "/dev/ttyUSB0"
+    frame_id: "laser_link"
+    ignore_array: ""
+    baudrate: 512000
+    samp_rate: 20
+    fixed_resolution: true
+    singleChannel: false
+    auto_reconnect: true
+    reversion: true
+    isToFLidar: true
+    angle_max: 180.0
+    angle_min: -180.0
+    max_range: 15.0
+    min_range: 0.05
+    frequency: 10.0

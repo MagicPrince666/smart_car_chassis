@@ -1,0 +1,38 @@
+/chassis:
+  ros__parameters:
+    # mode zyz/atk/mpu6050/mpu9250
+    imu_module: "mpu6050"
+    # IMU端口
+    imu_port: "/dev/i2c-0"
+    # 波特率
+    imu_baudrate: 921600
+    # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
+    type: "sbus"
+    # 端口
+    remote_port: "/dev/ttyS5"
+    # 波特率
+    baudrate: 100000
+    # 1帧数据长度
+    data_len: 25
+    # 最大量程
+    joy_var_max: 1800
+    # 最小量程
+    joy_var_min: 199
+    # 线速度最大值 单位m/s
+    max_x_vel: 0.4
+    # 角速度最大值 单位rad/s
+    max_w_vel: 5.0
+    # 最大转向角
+    max_angle: 0.758
+    # K 比例系数
+    proportion: 0.125
+    # I 积分系数
+    integration: 0.625
+    # D 微分系数
+    differentiation: 0.0
+    # 录制数据开关
+    record_data: false
+    # 直播开关
+    live_video: true
+    # 视频设备
+    video_device: "/dev/video3"

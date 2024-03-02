@@ -1,0 +1,12 @@
+[submodule "src/OrbbecSDK_ROS2"]
+	path = src/OrbbecSDK_ROS2
+	url = https://github.com/MagicPrince666/OrbbecSDK_ROS2.git
+[submodule "src/atk_imu901_ros2"]
+	path = src/atk_imu901_ros2
+	url = https://github.com/MagicPrince666/atk_imu901_ros2.git
+[submodule "src/remote_ros2"]
+	path = src/remote_ros2
+	url = https://github.com/MagicPrince666/remote_ros2.git
+[submodule "src/bluesea-ros2"]
+	path = src/bluesea-ros2
+	url = https://github.com/MagicPrince666/bluesea-ros2.git

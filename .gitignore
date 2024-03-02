@@ -1,0 +1,13 @@
+.vscode
+build/
+devel/
+install/
+log/
+Log/
+**/*.o
+**/*.a
+**/.DS_Store
+docs/.DS_Store
+live555/
+.catkin_workspace
+src/CMakeLists.txt

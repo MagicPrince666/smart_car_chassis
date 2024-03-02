@@ -17,9 +17,7 @@
 #include "imu_interface.h"
 #include "keyboard.h"
 #include "srf04.h"
-#include "v4l2_rtsp.h"
 #include "vl53l0x.h"
-#include "music.h"
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
 #include <geometry_msgs/Point.h>
@@ -118,8 +116,6 @@ private:
     std::shared_ptr<Srf04> ultrasonic_;
     std::shared_ptr<Vl53l0x> back_distance_;
     std::shared_ptr<RemoteProduct> remote_;
-    std::shared_ptr<V4l2Rtsp> live_video_;
-    std::shared_ptr<Music> music_player_;
 
     RemoteState rc_data_;
     RemoteConfig_t config_;

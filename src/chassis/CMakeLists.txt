@@ -61,69 +61,6 @@ elseif ($ENV{ROS_DISTRO} MATCHES "melodic")
   include_directories(include/spdlog)
 endif()
 
-set(USE_LIVE555 OFF)
-
-if(USE_LIVE555)
-
-set(LIVE555URL http://www.live555.com/liveMedia/public/live555-latest.tar.gz CACHE STRING "live555 url")
-set(LIVE555CFLAGS -DBSD=1 -DSOCKLEN_T=socklen_t -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1 -DALLOW_RTSP_SERVER_PORT_REUSE=1 -DNO_OPENSSL=1 CACHE STRING "live555 CFGLAGS")
-
-# openssl ?
-find_package(OpenSSL QUIET)
-
-# live555
-find_package(libliveMedia)
-find_package(libUsageEnvironment)
-find_package(libBasicUsageEnvironment)
-find_package(libgroupsock)
-if (LIBLIVEMEDIA_FOUND AND LIBBASICUSAGEENVIRONMENT_FOUND AND LIBUSAGEENVIRONMENT_FOUND AND LIBGROUPSOCK_FOUND)
-    message(STATUS "live555 loaded")
-    set(LIVEINCLUDE ${LIBLIVEMEDIA_INCLUDE_DIR} ${LIBBASICUSAGEENVIRONMENT_INCLUDE_DIR} ${LIBUSAGEENVIRONMENT_INCLUDE_DIR} ${LIBGROUPSOCK_INCLUDE_DIR})
-    SET(LIVE_LIBRARIES ${LIBLIVEMEDIA_LIBRARY} ${LIBUSAGEENVIRONMENT_LIBRARY} ${LIBBASICUSAGEENVIRONMENT_LIBRARY} ${LIBGROUPSOCK_LIBRARY}) 
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS}livemedia-utils,)
-else()
-    set(LIVE ${CMAKE_BINARY_DIR}/live)
-    set(LIVEINCLUDE ${LIVE}/groupsock/include ${LIVE}/liveMedia/include ${LIVE}/UsageEnvironment/include ${LIVE}/BasicUsageEnvironment/include)
-    if (NOT EXISTS ${LIVE})
-        file (DOWNLOAD ${LIVE555URL} ${CMAKE_BINARY_DIR}/live555-latest.tar.gz )
-        EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar xvf ${CMAKE_BINARY_DIR}/live555-latest.tar.gz  RESULT_VARIABLE unpack_result)
-        if(NOT unpack_result STREQUAL "0")
-            message(FATAL_ERROR "Fetching and compiling live555 failed!")
-        endif()
-    endif()
-    FILE(GLOB LIVESOURCE ${LIVE}/groupsock/*.c* ${LIVE}/liveMedia/*.c* ${LIVE}/UsageEnvironment/*.c* ${LIVE}/BasicUsageEnvironment/*.c*)
-    if (NOT OpenSSL_FOUND)
-        set(LIVE555CFLAGS ${LIVE555CFLAGS} -DNO_OPENSSL=1)
-    endif()
-    add_definitions(${LIVE555CFLAGS})
-endif()
-
-add_library (liblive555 STATIC ${LIVESOURCE})
-
-add_definitions(-DUSE_LIVE555)
-
-include_directories(
-    ${LIVEINCLUDE}
-    src/live_video/ringbuf
-    src/live_video
-)
-
-file(GLOB live_srcs 
-    src/live_video/*.cpp
-)
-
-else()
-# 自定义的librtsp
-include_directories(
-  src/librtsp
-)
-
-file(GLOB live_srcs 
-  src/librtsp/*.cpp
-)
-
-endif()
-
 include_directories(
     include
     src/drivers # 需要SOC资源
@@ -131,12 +68,7 @@ include_directories(
     src/remote  # 需要遥控器
     src/sensor  # 需要传感器
     src/motion  # 运动控制
-    src/sensor/camera
-    src/music
-    # src/sensor/audio_source
-    src/sensor/H264_camera
     src/utils
-    src/lora
     src/sensor/mpu6050
     src/sensor/mpu9250
     src/sensor/imu_modules
@@ -146,15 +78,10 @@ file(GLOB main_srcs
     src/*.cpp
     src/drivers/*.cpp
     src/sensor/*.cpp
-    src/music/*.cpp
-    # src/sensor/audio_source/*cpp
-    src/sensor/camera/*.cpp
-    src/sensor/H264_camera/*.cpp
     src/moto/*.cpp
     src/motion/*.cpp
     src/remote/*.cpp
     src/utils/*.cpp
-    src/lora/*.cpp
     src/sensor/mpu6050/*.cpp
     src/sensor/mpu9250/*.cpp
     src/sensor/imu_modules/*.cpp
@@ -188,7 +115,7 @@ catkin_package(
   message_runtime
 )
 
-add_executable(${PROJECT_NAME}_node ${main_srcs} ${live_srcs} ${LIVESOURCE})
+add_executable(${PROJECT_NAME}_node ${main_srcs})
 add_dependencies(${PROJECT_NAME}_node ${catkin_EXPORTED_TARGETS}) 
 
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} pthread json x264 asound faac mpg123 ${LIBSPDLOG})
@@ -210,12 +137,12 @@ include_directories(
     ${roslib_INCLUDE_DIRS} 
 )
 
-add_executable(${PROJECT_NAME}_node ${main_srcs} ${live_srcs} ${LIVESOURCE})
+add_executable(${PROJECT_NAME}_node ${main_srcs})
 if (${MACHINES} MATCHES "aarch64")
 # target_link_libraries(${PROJECT_NAME}_node pthread json x264 mali asound faac mpg123)
-target_link_libraries(${PROJECT_NAME}_node pthread json x264 asound faac mpg123 ${LIBSPDLOG})
+target_link_libraries(${PROJECT_NAME}_node pthread json ${LIBSPDLOG})
 else()
-target_link_libraries(${PROJECT_NAME}_node pthread json x264 asound faac mpg123 ${LIBSPDLOG})
+target_link_libraries(${PROJECT_NAME}_node pthread json ${LIBSPDLOG})
 endif()
 ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav_msgs sensor_msgs)
 

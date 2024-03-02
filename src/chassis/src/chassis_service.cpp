@@ -11,11 +11,6 @@
 #include <rclcpp/rclcpp.hpp>
 #endif
 
-#ifdef USE_LIVE555
-#include "OnDemandRTSPServer.h"
-#else
-#include "v4l2_rtsp.h"
-#endif
 #include "Gamepad.hpp"
 #include "atk_ms901m.h"
 #include "bts7960.h"
@@ -268,11 +263,6 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
         }
     }
 
-    if (live_video) {
-        live_video_ = std::make_shared<V4l2Rtsp>(video_device);
-        live_video_->Init();
-    }
-
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     if (imu_data_ptr_) {
         spdlog::info("{} imu start", imu_module.c_str());
@@ -321,10 +311,6 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 
     driver_enable_   = true;
     avoid_obstacles_ = true;
-
-    // music_player_ = std::make_shared<Music>("default");
-    // music_player_->Init();
-    // music_player_->PushToPlayList("12345.mp3");
 }
 
 ChassisSrv::~ChassisSrv()

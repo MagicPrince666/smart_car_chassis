@@ -3,11 +3,7 @@
 ## 电路图
 ![连接电路图](docs/电路图.png)
 
-### [f1c100s 遥控小车.](docs/F1c100s_Car.md)
-### [OrangePi PC2 智能小车.](docs/OrangePi_Pc2.md)
-### [MangoPi MQ PRO 智能小车.](docs/Mangopi_MQ_Pro.md)
 ### [MangoPi MQ QUAD 智能小车.](docs/Mangopi_MQ_Quad.md)
-### [LubanCat zero w 智能小车.](docs/LubanCat_Zero_W.md)
 
 * 码农不易 尊重劳动
 * 作者：大魔王与木头人
@@ -29,23 +25,9 @@ If you find my work useful and you want to encourage the development of more fre
 ## network_manager 连接
 ```bash
 sudo nmcli dev wifi connect OpenWrt_R619ac_2.4G password 67123236
-sudo nmcli dev wifi connect OpenWrt_TX1801_PLUS_2.4G password 67123236
 sudo apt install -y g++ cmake git libx264-dev libyaml-cpp-dev libmpg123-dev libfaac-dev
 ```
-## 同步子模块
-添加子仓库 url 到目录dir
-```bash
-git submodule add $url $dir
-```
-```bash
-git submodule update --init --recursive
-```
-## 修改子模块url
-1. 修改 .gitmodules 文件的url
-2. 执行 
-```bash
-git submodule sync
-```
+
 ## 安装依赖
 ```bash
 sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils xorg swig
@@ -82,42 +64,18 @@ sudo apt install ros-$ROS_DISTRO-rqt-common-plugins
 sudo apt install ros-$ROS_DISTRO-cartographer ros-$ROS_DISTRO-cartographer-ros ros-$ROS_DISTRO-nav2-map-server
 sudo apt install ros-$ROS_DISTRO-pcl*
 ```
-## 源码编译cartographer
-下载源码
-```bash
-git clone https://ghproxy.com/https://github.com/ros2/cartographer.git -b ros2
-git clone https://ghproxy.com/https://github.com/ros2/cartographer_ros.git -b ros2
-```
-
-环境准备
-```bash
-sudo apt install stow ninja-build libgoogle-glog-dev libceres-dev
-cd src/cartographer/scripts/
-./install_abseil.sh
-```
-编译指令
-```bash
-colcon build --packages-select cartographer
-colcon build --packages-select cartographer_ros_msgs
-colcon build --packages-select cartographer_ros
-```
 
 ## 编译ROS2
 ```bash
 colcon build --packages-select chassis
-colcon build --packages-select bluesea2
-colcon build --packages-select ros2_imu
-colcon build --packages-select ldlidar_stl_ros2
-colcon build --packages-select remote
 colcon build --packages-select ydlidar
 colcon build --packages-select fishbot_cartographer
 colcon build --packages-select fishbot_description
-colcon build --packages-select orbbec_camera
 ```
 
 ## 编译ROS1
 ```bash
-catkin_make -DCATKIN_WHITELIST_PACKAGES="chassis;remote"
+catkin_make -DCATKIN_WHITELIST_PACKAGES="chassis;ydlidar"
 ```
 
 ## 调试udev

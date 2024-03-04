@@ -1,7 +1,7 @@
 # linux 小车
 
 ## 电路图
-![连接电路图](docs/电路图.png)
+![连接电路图](docs/驱动板原理图.jpg)
 
 ### [MangoPi MQ QUAD 智能小车.](docs/Mangopi_MQ_Quad.md)
 

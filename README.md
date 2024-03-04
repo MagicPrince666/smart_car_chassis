@@ -3,7 +3,7 @@
 ## 电路图
 ![连接电路图](docs/驱动板原理图.jpg)
 
-### [MangoPi MQ QUAD 智能小车.](docs/Mangopi_MQ_Quad.md)
+### [MangoPi MQ QUAD 智能小车.](docs/Mangopi_MQ_Quad_Two_wheel.md)
 
 * 码农不易 尊重劳动
 * 作者：大魔王与木头人

@@ -11,17 +11,13 @@
 #include <rclcpp/rclcpp.hpp>
 #endif
 
-#include "Gamepad.hpp"
 #include "atk_ms901m.h"
 #include "bts7960.h"
 #include "interface.h"
 #include "jsonparse.h"
 #include "loadconfig.h"
 #include "mpu6050.h"
-#include "mpu9250.h"
 #include "sbus.h"
-#include "socket.h"
-#include "sonnyps2.h"
 #include "zyf176ex.h"
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
@@ -36,120 +32,120 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     std::string imu_module;
     ros_node_->getParam("chassis/imu_module", imu_module);
-    spdlog::info("imu_module = {}", imu_module.c_str());
+    ROS_INFO("imu_module = %s", imu_module.c_str());
 
     std::string imu_port;
     ros_node_->getParam("chassis/imu_port", imu_port);
-    spdlog::info("imu_port = {}", imu_port.c_str());
+    ROS_INFO("imu_port = %s", imu_port.c_str());
 
     int imu_baudrate;
     ros_node_->getParam("chassis/imu_baudrate", imu_baudrate);
-    spdlog::info("imu_baudrate = {}", imu_baudrate);
+    ROS_INFO("imu_baudrate = %d", imu_baudrate);
 
     ros_node_->getParam("type", config_.type);
-    spdlog::info("type = {}", config_.type.c_str());
+    ROS_INFO("type = %s", config_.type.c_str());
 
     ros_node_->getParam("chassis/remote_port", config_.port);
-    spdlog::info("remote_port = {}", config_.port.c_str());
+    ROS_INFO("remote_port = %s", config_.port.c_str());
 
     ros_node_->getParam("chassis/baudrate", config_.baudrate);
-    spdlog::info("baudrate = {}", config_.baudrate);
+    ROS_INFO("baudrate = %d", config_.baudrate);
 
     ros_node_->getParam("chassis/data_len", config_.data_len);
-    spdlog::info("data_len = {}", config_.data_len);
+    ROS_INFO("data_len = %d", config_.data_len);
 
     ros_node_->getParam("chassis/joy_var_max", config_.joy_var_max);
-    spdlog::info("joy_var_max = {}", config_.joy_var_max);
+    ROS_INFO("joy_var_max = %d", config_.joy_var_max);
 
     ros_node_->getParam("chassis/joy_var_min", config_.joy_var_min);
-    spdlog::info("joy_var_min = {}", config_.joy_var_min);
+    ROS_INFO("joy_var_min = %d", config_.joy_var_min);
 
     ros_node_->getParam("chassis/max_x_vel", config_.max_x_vel);
-    spdlog::info("max_x_vel = {}", config_.max_x_vel);
+    ROS_INFO("max_x_vel = %f", config_.max_x_vel);
 
     ros_node_->getParam("chassis/max_w_vel", config_.max_w_vel);
-    spdlog::info("max_w_vel = {}", config_.max_w_vel);
+    ROS_INFO("max_w_vel = %f", config_.max_w_vel);
 
     ros_node_->getParam("chassis/max_angle", config_.max_angle);
-    spdlog::info("max_angle = {}", config_.max_angle);
+    ROS_INFO("max_angle = %f", config_.max_angle);
 
     bool record_data;
     ros_node_->getParam("chassis/record_data", record_data);
-    spdlog::info("record_data = {}", record_data);
+    ROS_INFO("record_data = %d", record_data);
 
     bool live_video;
     ros_node_->getParam("chassis/live_video", live_video);
-    spdlog::info("live_video = {}", live_video);
+    ROS_INFO("live_video = %d", live_video);
 
     std::string video_device;
     ros_node_->getParam("chassis/video_device", video_device);
-    spdlog::info("video_device = {}", video_device.c_str());
+    ROS_INFO("video_device = %s", video_device.c_str());
 #else
     std::string imu_module;
     ros_node_->declare_parameter("imu_module", "");
     ros_node_->get_parameter("imu_module", imu_module);
-    spdlog::info("imu_module = {}", imu_module.c_str());
+    RCLCPP_INFO(ros_node_->get_logger(), "imu_module = %s", imu_module.c_str());
 
     std::string imu_port;
     ros_node_->declare_parameter("imu_port", "");
     ros_node_->get_parameter("imu_port", imu_port);
-    spdlog::info("imu_port = {}", imu_port.c_str());
+    RCLCPP_INFO(ros_node_->get_logger(), "imu_port = %s", imu_port.c_str());
 
     int imu_baudrate;
     ros_node_->declare_parameter("imu_baudrate", 115200);
     ros_node_->get_parameter("imu_baudrate", imu_baudrate);
-    spdlog::info("imu_baudrate = {}", imu_baudrate);
+    RCLCPP_INFO(ros_node_->get_logger(), "imu_baudrate = %d", imu_baudrate);
 
     ros_node_->declare_parameter("type", "");
     ros_node_->get_parameter("type", config_.type);
-    spdlog::info("type = {}", config_.type.c_str());
+    RCLCPP_INFO(ros_node_->get_logger(), "type = %s", config_.type.c_str());
 
     ros_node_->declare_parameter("remote_port", "/dev/ttyUSB0");
     ros_node_->get_parameter("remote_port", config_.port);
-    spdlog::info("remote_port = {}", config_.port.c_str());
+    RCLCPP_INFO(ros_node_->get_logger(), "remote_port = %s", config_.port.c_str());
 
     ros_node_->declare_parameter("baudrate", 100000);
     ros_node_->get_parameter("baudrate", config_.baudrate);
-    spdlog::info("baudrate = {}", config_.baudrate);
+    RCLCPP_INFO(ros_node_->get_logger(), "baudrate = %d", config_.baudrate);
 
     ros_node_->declare_parameter("data_len", 25);
     ros_node_->get_parameter("data_len", config_.data_len);
-    spdlog::info("data_len = {}", config_.data_len);
+    RCLCPP_INFO(ros_node_->get_logger(), "data_len = %d", config_.data_len);
 
     ros_node_->declare_parameter("joy_var_max", 1800);
     ros_node_->get_parameter("joy_var_max", config_.joy_var_max);
-    spdlog::info("joy_var_max = {}", config_.joy_var_max);
+    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_max = %d", config_.joy_var_max);
 
     ros_node_->declare_parameter("joy_var_min", 200);
     ros_node_->get_parameter("joy_var_min", config_.joy_var_min);
-    spdlog::info("joy_var_min = {}", config_.joy_var_min);
+    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_min = %s", config_.joy_var_min);
 
     ros_node_->declare_parameter("max_x_vel", 1.0);
     ros_node_->get_parameter("max_x_vel", config_.max_x_vel);
-    spdlog::info("max_x_vel = {}", config_.max_x_vel);
+    RCLCPP_INFO(ros_node_->get_logger(), "max_x_vel = %f", config_.max_x_vel);
 
     ros_node_->declare_parameter("max_w_vel", 1.0);
     ros_node_->get_parameter("max_w_vel", config_.max_w_vel);
-    spdlog::info("max_w_vel = {}", config_.max_w_vel);
+    RCLCPP_INFO(ros_node_->get_logger(), "max_w_vel = %f", config_.max_w_vel);
 
     ros_node_->declare_parameter("max_angle", 1.0);
     ros_node_->get_parameter("max_angle", config_.max_angle);
-    spdlog::info("max_angle = {}", config_.max_angle);
+    RCLCPP_INFO(ros_node_->get_logger(), "max_angle = %f", config_.max_angle);
 
     bool record_data;
     ros_node_->declare_parameter("record_data", false);
     ros_node_->get_parameter("record_data", record_data);
-    spdlog::info("record_data = {}", record_data);
+    RCLCPP_INFO(ros_node_->get_logger(), "record_data = %d", record_data);
 
     bool live_video;
     ros_node_->declare_parameter("live_video", false);
     ros_node_->get_parameter("live_video", live_video);
-    spdlog::info("live_video = {}", live_video);
+    RCLCPP_INFO(ros_node_->get_logger(), "live_video = %d", live_video);
 
     std::string video_device;
     ros_node_->declare_parameter("video_device", "");
     ros_node_->get_parameter("video_device", video_device);
-    spdlog::info("video_device = {}", video_device.c_str());
+    RCLCPP_INFO(ros_node_->get_logger(), "video_device = %s", video_device.c_str());
 #endif
 
     if (record_data) {
@@ -174,39 +170,21 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
         // 通过工厂方法创建sbus遥控产品
         std::shared_ptr<RemoteProduct> sbus(factory->CreateRemoteProduct(config_, false));
         remote_ = sbus;
-    } else if (config_.type == "gamepad") {
-        std::unique_ptr<RemoteFactory> factory(new GamePadRemote());
-        std::shared_ptr<RemoteProduct> gamepad(factory->CreateRemoteProduct(config_, false));
-        remote_ = gamepad;
-    } else if (config_.type == "keyboard") {
-        // 创建遥控工厂
-        std::unique_ptr<RemoteFactory> factory(new KeyBoardRemote());
-        // 通过工厂方法创建键盘遥控产品
-        std::shared_ptr<RemoteProduct> key(factory->CreateRemoteProduct(config_, false));
-        remote_ = key;
-    } else if (config_.type == "socket") {
-        std::unique_ptr<RemoteFactory> factory(new UdpRemote());
-        std::shared_ptr<RemoteProduct> udp_server(factory->CreateRemoteProduct(config_, false));
-        remote_ = udp_server;
-    } else if (config_.type == "sonnyps2") {
-        std::unique_ptr<RemoteFactory> factory(new SonnyRemote());
-        std::shared_ptr<RemoteProduct> ps2(factory->CreateRemoteProduct(config_, false));
-        remote_ = ps2;
     } else {
-        spdlog::error("please use an avlable remote");
+        RCLCPP_ERROR(ros_node_->get_logger(), "please use an avlable remote");
     }
 
     bool sonar = false;
     config->LoadDistanceConfig("srf04", sonar);
     if (sonar) {
-        spdlog::info("Enable srf04");
+        RCLCPP_INFO(ros_node_->get_logger(), "Enable srf04");
         ultrasonic_ = std::make_shared<Srf04>();
     }
 
     bool tof = false;
     config->LoadDistanceConfig("vl53l0x", tof);
     if (tof) {
-        spdlog::info("Enable vl53l0x");
+        RCLCPP_INFO(ros_node_->get_logger(), "Enable vl53l0x");
         back_distance_ = std::make_shared<Vl53l0x>();
     }
 
@@ -243,7 +221,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
         car_is_ackerman_ = false;
         motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_left_info, moto_right_info);
     } else {
-        spdlog::error("Not support yet!!");
+        RCLCPP_ERROR(ros_node_->get_logger(), "Not support yet!!");
     }
 
     memset((uint8_t *)&rc_data_, 0, sizeof(rc_data_));
@@ -256,16 +234,14 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
             imu_data_ptr_ = std::make_shared<Zyf176ex>(imu_port, imu_baudrate);
         } else if (imu_module == "mpu6050") {
             imu_data_ptr_ = std::make_shared<Mpu6050>(imu_port, imu_baudrate);
-        } else if (imu_module == "mpu9250") {
-            imu_data_ptr_ = std::make_shared<Mpu9250>(imu_port, imu_baudrate);
         } else {
-            spdlog::error("{} imu is not support yet", imu_module.c_str());
+            RCLCPP_ERROR(ros_node_->get_logger(), "%s imu is not support yet", imu_module.c_str());
         }
     }
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     if (imu_data_ptr_) {
-        spdlog::info("{} imu start", imu_module.c_str());
+        ROS_INFO("%s imu start", imu_module.c_str());
         imu_data_ptr_->Init();
         imu_pub_ = std::make_shared<ros::Publisher>(ros_node_->advertise<ImuMsg>("imu_data", 10));
     }
@@ -282,7 +258,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 
 #else
     if (imu_data_ptr_) {
-        spdlog::info("{} imu start", imu_module.c_str());
+        RCLCPP_INFO(ros_node_->get_logger(), "%s imu start", imu_module.c_str());
         imu_data_ptr_->Init();
         imu_pub_ = ros_node_->create_publisher<ImuMsg>("imu_data", 10);
     }
@@ -326,7 +302,7 @@ ChassisSrv::~ChassisSrv()
 
 void ChassisSrv::CmdVelCallback(const TwistMsg::SharedPtr msg)
 {
-    // spdlog::info("linear: [{}]\tangular : [{}]", msg->linear.x, msg->angular.z);
+    // RCLCPP_INFO(ros_node_->get_logger(), "linear: [%f]\tangular : [%f]", msg->linear.x, msg->angular.z);
     if (record_data_) {
         recording_input_ = msg->linear.x;
     }
@@ -407,7 +383,7 @@ void ChassisSrv::LoopCallback()
     }
 
     if (!rc_data_.adslx || !rc_data_.adsly || !rc_data_.adsrx || !rc_data_.adsry) {
-        spdlog::warn("Driver lx = {}, ly = {}, rx = {}, ry = {}",
+        RCLCPP_WARN(ros_node_->get_logger(), "Driver lx = %f, ly = %f, rx = %f, ry = %f",
                      rc_data_.adslx, rc_data_.adsly, rc_data_.adsrx, rc_data_.adsry);
         return;
     }
@@ -416,13 +392,13 @@ void ChassisSrv::LoopCallback()
         motion_ctl_->DriverCtrl(0.0, 0.0);
         if (driver_enable_) {
             driver_enable_ = false;
-            spdlog::warn("Driver disable");
+            RCLCPP_WARN(ros_node_->get_logger(), "Driver disable");
         }
         return;
     } else {
         if (!driver_enable_) {
             driver_enable_ = true;
-            spdlog::info("Driver enable");
+            RCLCPP_INFO(ros_node_->get_logger(), "Driver enable");
         }
     }
 
@@ -431,12 +407,12 @@ void ChassisSrv::LoopCallback()
         back_dis = 1000;
         if (avoid_obstacles_) {
             avoid_obstacles_ = false;
-            spdlog::warn("Avoid obstacles disable");
+            RCLCPP_WARN(ros_node_->get_logger(), "Avoid obstacles disable");
         }
     } else {
         if (!avoid_obstacles_) {
             avoid_obstacles_ = true;
-            spdlog::info("Avoid obstacles enable");
+            RCLCPP_INFO(ros_node_->get_logger(), "Avoid obstacles enable");
         }
     }
 
@@ -446,12 +422,12 @@ void ChassisSrv::LoopCallback()
     }
 
     if (font_dis > 0 && font_dis <= 400 && vspeed > 0) { // 前避障
-        spdlog::warn("Obstacle ahead distance = {} mm", font_dis);
+        RCLCPP_WARN(ros_node_->get_logger(), "Obstacle ahead distance = %d mm", font_dis);
         vspeed = 0.0;
     }
 
     if (back_dis > 20 && back_dis <= 100 && vspeed < 0) { // 后避障
-        spdlog::warn("Obstacle behind distance = {} mm", back_dis);
+        RCLCPP_WARN(ros_node_->get_logger(), "Obstacle behind distance = %d mm", back_dis);
         vspeed = 0.0;
     }
     if (vspeed > -0.01 && vspeed < 0.01) {
@@ -464,7 +440,6 @@ void ChassisSrv::LoopCallback()
 
     if (car_is_ackerman_) {
         float angle = (1 - 2.0 * rc_data_.adsrx) * config_.max_angle; // 右摇杆x轴 转向角度
-        // spdlog::info("speed = {}ms\tangle = {}", vspeed, angle);
         motion_ctl_->DriverCtrl(vspeed, angle);
     } else {
         float angle = (1 - 2.0 * rc_data_.adsrx) * config_.max_w_vel; // 右摇杆x轴 角速度

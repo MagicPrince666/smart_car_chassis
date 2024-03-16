@@ -9,9 +9,7 @@
 #include "interface.h"
 #include "mpu6050.h"
 #include "utils.h"
-#include "xinotify.h"
 #include "driver_mpu6050_interface.h"
-#include <spdlog/spdlog.h>
 
 static void a_receive_callback(uint8_t type)
 {
@@ -184,7 +182,7 @@ void Mpu6050::Mpu6050Loop()
                          a_dmp_tap_callback, a_dmp_orient_callback) != 0) {
         gpio_irq_ = nullptr;
         GpioInterruptDeinit();
-        spdlog::error("dmp init fail!!");
+        RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "dmp init fail!!");
         return;
     }
 
@@ -217,21 +215,21 @@ void Mpu6050::Mpu6050Loop()
             (void)mpu6050_dmp_deinit();
             gpio_irq_ = nullptr;
             GpioInterruptDeinit();
-            spdlog::error("dmp read all fail!!");
+            RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "dmp read all fail!!");
             return;
         }
 
         /* output */
-        spdlog::info("fifo {}.", fifo_len);
-        spdlog::info("pitch: {}\troll: {}\tyaw: {}", gs_pitch[0], gs_roll[0], gs_yaw[0]);
+        RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "fifo %d.", fifo_len);
+        RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "pitch: %f\troll: %f\tyaw: %f", gs_pitch[0], gs_roll[0], gs_yaw[0]);
 
-        // spdlog::info("acc x[0] is {}g.", gs_accel_g[0][0]);
-        // spdlog::info("acc y[0] is {}g.", gs_accel_g[0][1]);
-        // spdlog::info("acc z[0] is {}g.", gs_accel_g[0][2]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "acc x[0] is %fg.", gs_accel_g[0][0]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "acc y[0] is %fg.", gs_accel_g[0][1]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "acc z[0] is %fg.", gs_accel_g[0][2]);
 
-        // spdlog::info("gyro x[0] is {}dps.", gs_gyro_dps[0][0]);
-        // spdlog::info("gyro y[0] is {}dps.", gs_gyro_dps[0][1]);
-        // spdlog::info("gyro z[0] is {}dps.", gs_gyro_dps[0][2]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "gyro x[0] is %fdps.", gs_gyro_dps[0][0]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "gyro y[0] is %fdps.", gs_gyro_dps[0][1]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "gyro z[0] is %fdps.", gs_gyro_dps[0][2]);
 
         Eular euler;
         euler.pitch = gs_pitch[0] * M_PI / 180.0;
@@ -254,7 +252,7 @@ void Mpu6050::Mpu6050Loop()
             (void)mpu6050_dmp_deinit();
             gpio_irq_ = nullptr;
             GpioInterruptDeinit();
-            spdlog::error("dmp get pedometer counter fail!!");
+            RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "dmp get pedometer counter fail!!");
             return;
         }
     }

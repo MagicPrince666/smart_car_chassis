@@ -6,7 +6,6 @@
 #include <linux/input.h>
 #include <sys/timerfd.h>
 #endif
-#include <spdlog/spdlog.h>
 
 #define USE_OPENCL 0
 
@@ -31,10 +30,10 @@ Kinematics::Kinematics(DriverParams car_param, MotoInfo moto_ctrl, PwmPram servo
     pid_controller_[0]->out_limit(-moto_ctrl_[0]->MaxPwm(), moto_ctrl_[0]->MaxPwm());
     pid_controller_[0]->update_target(0);
     servo_ctrl_ = std::make_shared<ServoMoto>(servo_ctrl); // 舵机控制
-    spdlog::info("Rotary input {}", car_param.RotaryChanel[0].c_str());
-    spdlog::info("MaxAngle {}", car_param.MaxAngle);
-    spdlog::info("ZeroAngle {}", car_param.ZeroAngle);
-    spdlog::info("Proportion: {}\t Integration {}\t Differentiation: {}", car_param.Proportion, car_param.Integration, car_param.Differentiation);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "Rotary input %s", car_param.RotaryChanel[0].c_str());
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "MaxAngle %f", car_param.MaxAngle);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "ZeroAngle %f", car_param.ZeroAngle);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "Proportion: %f\t Integration %f\t Differentiation: %f", car_param.Proportion, car_param.Integration, car_param.Differentiation);
     rotary_encoder_[0]  = std::make_shared<RotaryEncoder>(car_param.RotaryChanel[0]); // 编码器
     out_motor_speed_[0] = 0.0;
     current_speeds_[0]  = 0.0;
@@ -59,10 +58,10 @@ Kinematics::Kinematics(DriverParams car_param, MotoInfo moto1_ctrl, MotoInfo mot
     pid_controller_[0] = std::make_shared<PidController>(car_param.Proportion, car_param.Integration, car_param.Differentiation);
     pid_controller_[0]->out_limit(-moto_ctrl_[0]->MaxPwm(), moto_ctrl_[0]->MaxPwm());
     pid_controller_[0]->update_target(0);
-    spdlog::info("RotaryChanel1: {}\tRotaryChanel2: {}", car_param.RotaryChanel[0].c_str(), car_param.RotaryChanel[1].c_str());
-    spdlog::info("MaxXVel {}", car_param.MaxXVel);
-    spdlog::info("MaxWVel {}", car_param.MaxWVel);
-    spdlog::info("Proportion: {}\t Integration {}\t Differentiation: {}", car_param.Proportion, car_param.Integration, car_param.Differentiation);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "RotaryChanel1: %s\tRotaryChanel2: %s", car_param.RotaryChanel[0].c_str(), car_param.RotaryChanel[1].c_str());
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "MaxXVel %f", car_param.MaxXVel);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "MaxWVel %f", car_param.MaxWVel);
+    RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "Proportion: %f\t Integration %f\t Differentiation: %f", car_param.Proportion, car_param.Integration, car_param.Differentiation);
     rotary_encoder_[1]  = std::make_shared<RotaryEncoder>(car_param.RotaryChanel[0]);
     rotary_encoder_[0]  = std::make_shared<RotaryEncoder>(car_param.RotaryChanel[1]);
     out_motor_speed_[1] = 0.0;
@@ -134,7 +133,7 @@ int Kinematics::timeOutCallBack()
             float out_target = pid_controller_[1]->update(speeds);
             if (out_motor_speed_[1] != out_target) {
                 out_motor_speed_[1] = out_target;
-                // spdlog::info("target_left = {}", out_motor_speed_[1]);
+                // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "target_left = %f", out_motor_speed_[1]);
             }
         }
         if (speeds != current_speeds_[1]) {
@@ -153,7 +152,7 @@ int Kinematics::timeOutCallBack()
             float out_target = pid_controller_[0]->update(speeds);
             if (out_motor_speed_[0] != out_target) {
                 out_motor_speed_[0] = out_target;
-                // spdlog::info("target_right = {}", out_motor_speed_[0]);
+                // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "target_right = %f", out_motor_speed_[0]);
             }
         }
         if (speeds != current_speeds_[0]) {
@@ -166,13 +165,13 @@ int Kinematics::timeOutCallBack()
     float linear_speed, angular_speed;
     if (model_is_ackerman_) {
         if (show) {
-            spdlog::info("Current speed = {}m/s", current_speeds_[0]);
+            RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "Current speed = %fm/s", current_speeds_[0]);
         }
         // 阿克曼底盘运动学正解
         AckermanForward(current_speeds_[0], transient_theta_, linear_speed, angular_speed);
     } else {
         if (show) {
-            spdlog::info("left = {}m/s\tright = {}m/s", current_speeds_[1], current_speeds_[0]);
+            RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "left = %fm/s\tright = %fm/s", current_speeds_[1], current_speeds_[0]);
         }
         // 双轮差速运动学正解
         TwoWheelForward(current_speeds_[1], current_speeds_[0], linear_speed, angular_speed);
@@ -252,7 +251,7 @@ bool Kinematics::CmdVel(float xvel, float wvel)
         }
 
         TwoWheelInverse(line_speed, angle_speed, vl, vr);
-        // spdlog::info("target_left = {}\ttarget_right = {}", vl, vr);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "target_left = %f\ttarget_right = %f", vl, vr);
         pid_controller_[1]->update_target(vl * 1000); // mm/s作为单位
         pid_controller_[0]->update_target(vr * 1000);
         // moto_ctrl_[1]->MotoSpeed(vl);
@@ -281,7 +280,7 @@ bool Kinematics::DriverCtrl(float v_d, float delta)
     transient_theta_ = angle;
     angle            = angle / car_param_.MaxAngle;
 
-    // spdlog::info("speed = {}\tangle = {}", speed, angle);
+    // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "speed = %f\tangle = %f", speed, angle);
     pid_controller_[0]->update_target(speed * 1000);
     // moto_ctrl_[0]->MotoSpeed(speed);
     servo_ctrl_->SetServo(angle);

@@ -9,7 +9,6 @@
 #include "srf04.h"
 #include "utils.h"
 #include "interface.h"
-#include "xinotify.h"
 
 Srf04::Srf04(std::string dev) 
 {

@@ -8,7 +8,7 @@ endif()
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 14)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -118,7 +118,7 @@ catkin_package(
 add_executable(${PROJECT_NAME}_node ${main_srcs})
 add_dependencies(${PROJECT_NAME}_node ${catkin_EXPORTED_TARGETS}) 
 
-target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} pthread json x264 asound faac mpg123 ${LIBSPDLOG})
+target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} pthread json ${LIBSPDLOG})
 
 install(DIRECTORY ${PROJECT_NAME}_node
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

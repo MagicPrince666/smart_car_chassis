@@ -118,7 +118,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 
     ros_node_->declare_parameter("joy_var_min", 200);
     ros_node_->get_parameter("joy_var_min", config_.joy_var_min);
-    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_min = %s", config_.joy_var_min);
+    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_min = %d", config_.joy_var_min);
 
     ros_node_->declare_parameter("max_x_vel", 1.0);
     ros_node_->get_parameter("max_x_vel", config_.max_x_vel);

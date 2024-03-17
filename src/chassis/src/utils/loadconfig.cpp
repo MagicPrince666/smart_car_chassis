@@ -9,8 +9,8 @@
 #include <memory>
 #include <string>
 
-LoadConfig::LoadConfig() {
-    JsoncppParseRead::ReadFileToJson(CONFIG_FILE_PATH, conf_json_);
+LoadConfig::LoadConfig(std::string file_path) {
+    JsoncppParseRead::ReadFileToJson(file_path, conf_json_);
 }
 
 LoadConfig::~LoadConfig() {}

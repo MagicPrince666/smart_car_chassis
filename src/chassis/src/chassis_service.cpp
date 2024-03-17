@@ -166,7 +166,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
     if (conf_json.isMember("chip") && conf_json["chip"].isString()) {
         chip = conf_json["chip"].asString();
     }
-    std::unique_ptr<LoadConfig> config(new LoadConfig);
+    std::unique_ptr<LoadConfig> config(new LoadConfig(driver_conf));
 
     // 雷达转速控制
     PwmPram lidar_pwm;

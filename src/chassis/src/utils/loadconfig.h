@@ -19,7 +19,7 @@
 class LoadConfig
 {
 public:
-    LoadConfig();
+    LoadConfig(std::string file_path);
     ~LoadConfig();
 
     bool LoadPwmConfig(std::string key, PwmPram &pwm);

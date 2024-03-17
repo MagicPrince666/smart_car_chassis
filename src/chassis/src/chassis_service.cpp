@@ -27,8 +27,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 #endif
     : ros_node_(node)
 {
-    Json::Value conf_json;
-    JsoncppParseRead::ReadFileToJson(CONFIG_FILE_PATH, conf_json);
+    std::string driver_conf;
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     std::string imu_module;
     ros_node_->getParam("chassis/imu_module", imu_module);
@@ -80,6 +79,9 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
     std::string video_device;
     ros_node_->getParam("chassis/video_device", video_device);
     ROS_INFO("video_device = %s", video_device.c_str());
+
+    ros_node_->getParam("chassis/driver_conf", driver_conf);
+    ROS_INFO("driver_conf = %s", driver_conf.c_str());
 #else
     std::string imu_module;
     ros_node_->declare_parameter("imu_module", "");
@@ -146,7 +148,14 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
     ros_node_->declare_parameter("video_device", "");
     ros_node_->get_parameter("video_device", video_device);
     RCLCPP_INFO(ros_node_->get_logger(), "video_device = %s", video_device.c_str());
+
+    ros_node_->declare_parameter("driver_conf", "");
+    ros_node_->get_parameter("driver_conf", driver_conf);
+    RCLCPP_INFO(ros_node_->get_logger(), "driver_conf = %s", driver_conf.c_str());
 #endif
+
+    Json::Value conf_json;
+    JsoncppParseRead::ReadFileToJson(driver_conf, conf_json);
 
     if (record_data) {
         record_data_ = std::make_shared<RecordData>("speed_ctrl.csv");

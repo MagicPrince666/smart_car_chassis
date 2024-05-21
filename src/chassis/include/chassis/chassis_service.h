@@ -13,7 +13,6 @@
 #include <memory>
 
 #include "Kinematics.h"
-#include "RecordData.h"
 #include "imu_interface.h"
 #include "RemoteFactory.h"
 #include "srf04.h"
@@ -121,9 +120,6 @@ private:
     RemoteConfig_t config_;
     bool driver_enable_;
     bool avoid_obstacles_;
-
-    std::shared_ptr<RecordData> record_data_;
-    float recording_input_ = 0.0;
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     ros::Time GetTimeNow();

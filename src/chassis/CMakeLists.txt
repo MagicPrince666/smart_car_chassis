@@ -129,7 +129,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME}_node ${main_srcs})
 if (${MACHINES} MATCHES "aarch64")
-# target_link_libraries(${PROJECT_NAME}_node pthread json x264 mali asound faac mpg123)
+# target_link_libraries(${PROJECT_NAME}_node pthread json)
 target_link_libraries(${PROJECT_NAME}_node pthread json)
 else()
 target_link_libraries(${PROJECT_NAME}_node pthread json)

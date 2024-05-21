@@ -157,11 +157,6 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
     Json::Value conf_json;
     JsoncppParseRead::ReadFileToJson(driver_conf, conf_json);
 
-    if (record_data) {
-        record_data_ = std::make_shared<RecordData>("speed_ctrl.csv");
-        record_data_->PushToFile("time", "action", "response");
-    }
-
     std::string chip = "";
     if (conf_json.isMember("chip") && conf_json["chip"].isString()) {
         chip = conf_json["chip"].asString();
@@ -312,9 +307,6 @@ ChassisSrv::~ChassisSrv()
 void ChassisSrv::CmdVelCallback(const TwistMsg::SharedPtr msg)
 {
     // RCLCPP_INFO(ros_node_->get_logger(), "linear: [%f]\tangular : [%f]", msg->linear.x, msg->angular.z);
-    if (record_data_) {
-        recording_input_ = msg->linear.x;
-    }
     if (car_is_ackerman_) {
         motion_ctl_->DriverCtrl(msg->linear.x, msg->angular.z);
     } else {
@@ -443,10 +435,6 @@ void ChassisSrv::LoopCallback()
         vspeed = 0.0;
     }
 
-    if (record_data_) {
-        recording_input_ = vspeed;
-    }
-
     if (car_is_ackerman_) {
         float angle = (1 - 2.0 * rc_data_.adsrx) * config_.max_angle; // 右摇杆x轴 转向角度
         motion_ctl_->DriverCtrl(vspeed, angle);
@@ -485,10 +473,6 @@ void ChassisSrv::PubOdom()
     message.twist.twist.angular.z = odom.angular_speed;
 
     odom_pub_->publish(message);
-
-    if (record_data_) {
-        record_data_->PushToFile(GetCurrentMsTime(), recording_input_, odom.linear_speed);
-    }
 }
 
 uint32_t ChassisSrv::GetCurrentMsTime()

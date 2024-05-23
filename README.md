@@ -25,7 +25,7 @@ If you find my work useful and you want to encourage the development of more fre
 ## network_manager 连接
 ```bash
 sudo nmcli dev wifi connect OpenWrt_R619ac_2.4G password 67123236
-sudo apt install -y g++ cmake git libx264-dev libyaml-cpp-dev libmpg123-dev libfaac-dev
+sudo apt install -y g++ cmake git libyaml-cpp-dev
 ```
 
 ## 安装依赖
@@ -262,3 +262,6 @@ sudo systemctl start frpc.service # 启动
 sudo systemctl status frpc.service # 查看状态
 sudo systemctl enable frpc.service # 开机自启动
 ```
+
+git config --global user.name "MagicPrince666"
+git config --global user.email "846863428@qq.com"

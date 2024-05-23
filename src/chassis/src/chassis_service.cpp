@@ -267,7 +267,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
         imu_pub_ = ros_node_->create_publisher<ImuMsg>("imu_data", 10);
     }
     // 使用回调组来并行接收回调
-#if defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
+#if defined(USE_GALACTIC_VERSION) || defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
     callback_group_sub1_ = ros_node_->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
 #else
     callback_group_sub1_ = ros_node_->create_callback_group(rclcpp::callback_group::CallbackGroupType::MutuallyExclusive);

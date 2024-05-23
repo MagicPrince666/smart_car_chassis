@@ -77,7 +77,7 @@ private:
     rclcpp::Publisher<RangeMsg>::SharedPtr ultrasonic_pub_;
     rclcpp::Publisher<RangeMsg>::SharedPtr tof_pub_;
     rclcpp::Publisher<OdometryMsg>::SharedPtr odom_pub_;
-#if defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
+#if defined(USE_GALACTIC_VERSION) || defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
     rclcpp::CallbackGroup::SharedPtr callback_group_sub1_;
     rclcpp::CallbackGroup::SharedPtr callback_group_sub2_;
 #else

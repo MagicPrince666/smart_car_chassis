@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     rclcpp::init(argc, argv);
 
     // 多线程执行器
-#if defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
+#if defined(USE_GALACTIC_VERSION) || defined(USE_HUMBLE_VERSION) || defined(USE_IRON_VERSION)
     rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), std::thread::hardware_concurrency(), true);
 #else
     rclcpp::executors::MultiThreadedExecutor executor(rclcpp::executor::ExecutorArgs(), std::thread::hardware_concurrency(), true);

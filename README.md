@@ -262,6 +262,3 @@ sudo systemctl start frpc.service # 启动
 sudo systemctl status frpc.service # 查看状态
 sudo systemctl enable frpc.service # 开机自启动
 ```
-
-git config --global user.name "MagicPrince666"
-git config --global user.email "846863428@qq.com"

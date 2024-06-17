@@ -13,7 +13,6 @@ import lifecycle_msgs.msg
 def generate_launch_description():
 
     chassis_cfg = os.path.join(get_package_share_directory('chassis'), 'params', 'mqquad_cfg.yaml')
-    config_path = os.path.join(get_package_share_directory('chassis'), 'params', 'mqquad_two_wheel_diff_model.json')
     parameter_file=os.path.join(get_package_share_directory('ydlidar'), 'params', 'ydlidar.yaml')
     urdf_model_path = os.path.join(get_package_share_directory('fishbot_description'), 'urdf', 'fishbot_base.urdf')
 
@@ -32,7 +31,7 @@ def generate_launch_description():
         package='chassis',
         executable='chassis_node',
         output='screen',
-        parameters=[chassis_cfg, {'driver_conf': config_path}],
+        parameters=[chassis_cfg],
         )
     
     robot_state_publisher_node = Node(

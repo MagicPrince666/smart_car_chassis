@@ -15,7 +15,7 @@
 #include "xepoll.h"
 
 RotaryEncoder::RotaryEncoder(std::string dev, float reduction_ratio, float precision)
-    : rotary_encoder_dev_(dev), reduction_ratio_(reduction_ratio), precision_(precision)
+    : encoder_dev_name_(dev), reduction_ratio_(reduction_ratio), precision_(precision)
 {
     rotary_encoder_fd_ = -1;
     velocity_          = 0;
@@ -61,21 +61,13 @@ int32_t RotaryEncoder::GetTicksRoll()
 
 bool RotaryEncoder::Init()
 {
-    int fd = -1;
-    if ((fd = open(rotary_encoder_dev_.c_str(), O_RDONLY, 0)) >= 0) {
-        char buf[256] = {0};
-        ioctl(fd, EVIOCGNAME(sizeof(buf)), buf);
-        std::string device(buf);
-        std::cout << rotary_encoder_dev_ << " info " << device << std::endl;
-        if (device.find("rotary") != std::string::npos) {
-            rotary_encoder_fd_ = fd;
-        }
-    }
+    rotary_encoder_dev_ = Utils::ScanInputDevice(encoder_dev_name_);
+    rotary_encoder_fd_ = open(rotary_encoder_dev_.c_str(), O_RDONLY, 0);
 
     assert(rotary_encoder_fd_ >= 0);
     // 绑定回调函数
     if (rotary_encoder_fd_ > 0) {
-        std::cout << "Bind epoll" << std::endl;
+        std::cout << encoder_dev_name_ << " bind epoll" << std::endl;
         MY_EPOLL.EpollAddRead(rotary_encoder_fd_, std::bind(&RotaryEncoder::ReadTicks, this));
     }
     return true;

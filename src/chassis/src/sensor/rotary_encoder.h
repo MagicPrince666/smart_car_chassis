@@ -18,7 +18,7 @@
 class RotaryEncoder
 {
 public:
-    RotaryEncoder(std::string dev = "/dev/input/event0", float reduction_ratio = 34.0, float precision = 12.0);
+    RotaryEncoder(std::string dev = "rotary@0", float reduction_ratio = 34.0, float precision = 12.0);
     ~RotaryEncoder();
 
     /**
@@ -38,6 +38,7 @@ private:
 
     std::mutex counter_lock_;
     std::string rotary_encoder_dev_;
+    std::string encoder_dev_name_;
     int rotary_encoder_fd_;
     float reduction_ratio_; // 减速比
     float precision_;       // 编码器精度

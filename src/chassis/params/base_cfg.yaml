@@ -2,7 +2,7 @@
   ros__parameters:
     imu:
       # mode zyz/atk/mpu6050/mpu9250
-      module: "atk"
+      module: ""
       # IMU端口
       port: "/dev/ttyS8"
       # 波特率
@@ -11,7 +11,7 @@
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
       type: "sbus"
       # 端口
-      port: "/dev/ttyS4"
+      port: "/dev/ttyS3"
       # 波特率
       baudrate: 100000
       # 1帧数据长度

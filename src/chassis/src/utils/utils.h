@@ -20,6 +20,8 @@ namespace Utils {
  */
 std::string ScanIioDevice(std::string name);
 
+std::string ScanInputDevice(std::string name);
+
 /**
  * @brief 一次性读取文件所有内容
  * @param path 文件路径

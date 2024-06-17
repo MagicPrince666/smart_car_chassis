@@ -41,6 +41,37 @@ std::string Utils::ScanIioDevice(std::string name) {
     return device;
 }
 
+std::string Utils::ScanInputDevice(std::string name)
+{
+    std::string device = "";
+    if(!name.empty()) { //扫描设备
+        for(int i = 0; i < 10; i++) {
+            std::string filename = "/sys/class/input/event" + std::to_string(i) + "/device/name";
+            // std::cout << "iio bus name" << filename << std::endl;
+            struct stat buffer;   
+            if(stat(filename.c_str(), &buffer) == 0) {
+                std::ifstream iio_name;
+                iio_name.open(filename, std::ios::in);
+                char buff[64] = {0};
+                iio_name.read(buff, sizeof(buff));
+                std::string dev_name(buff);
+
+                if (dev_name.find(name) != std::string::npos) {
+                    // std::cout << "find " << name << " device\n";
+                    device = "/dev/input/event" + std::to_string(i);
+                    break;
+                }
+            } else {
+                // 搜索完了，没有找到对应设备
+                std::cout << "input device scan end\n";
+                break;
+            }
+        }
+    }
+
+    return device;
+}
+
 std::string Utils::ReadFileIntoString(const std::string& path) {
     std::ifstream input_file(path);
     if (!input_file.is_open()) {

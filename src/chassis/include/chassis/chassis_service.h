@@ -121,11 +121,35 @@ private:
     bool driver_enable_;
     bool avoid_obstacles_;
 
+    typedef enum {
+        REMOTE_UNKNOW   = 0x00,
+        REMOTE_SBUS     = 0x01,
+        REMOTE_GAMEPAD  = 0x02,
+        REMOTE_KEYBOARD = 0x03,
+        REMOTE_SOCKET   = 0x04,
+        REMOTE_SONY_PS2 = 0x05,
+        REMOTE_YL_800T  = 0x06,
+    } RemoteType;
+
+    RemoteType remote_type_;
+
+    typedef struct {
+        std::string imu_module;
+        std::string imu_port;
+        int imu_baudrate;
+    } ImuConf;
+
+    ImuConf imu_conf_;
+
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     ros::Time GetTimeNow();
 #else
     rclcpp::Time GetTimeNow();
 #endif
+    void GetImuConfig();
+    void GetRemoteConfig();
+    void GetDriverConfig();
+    void GetOtherConfig();
 };
 
 #endif

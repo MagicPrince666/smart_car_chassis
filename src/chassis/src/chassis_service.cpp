@@ -27,225 +27,16 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 #endif
     : ros_node_(node)
 {
-    std::string driver_conf;
-#if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
-    std::string imu_module;
-    ros_node_->getParam("chassis/imu_module", imu_module);
-    ROS_INFO("imu_module = %s", imu_module.c_str());
-
-    std::string imu_port;
-    ros_node_->getParam("chassis/imu_port", imu_port);
-    ROS_INFO("imu_port = %s", imu_port.c_str());
-
-    int imu_baudrate;
-    ros_node_->getParam("chassis/imu_baudrate", imu_baudrate);
-    ROS_INFO("imu_baudrate = %d", imu_baudrate);
-
-    ros_node_->getParam("type", config_.type);
-    ROS_INFO("type = %s", config_.type.c_str());
-
-    ros_node_->getParam("chassis/remote_port", config_.port);
-    ROS_INFO("remote_port = %s", config_.port.c_str());
-
-    ros_node_->getParam("chassis/baudrate", config_.baudrate);
-    ROS_INFO("baudrate = %d", config_.baudrate);
-
-    ros_node_->getParam("chassis/data_len", config_.data_len);
-    ROS_INFO("data_len = %d", config_.data_len);
-
-    ros_node_->getParam("chassis/joy_var_max", config_.joy_var_max);
-    ROS_INFO("joy_var_max = %d", config_.joy_var_max);
-
-    ros_node_->getParam("chassis/joy_var_min", config_.joy_var_min);
-    ROS_INFO("joy_var_min = %d", config_.joy_var_min);
-
-    ros_node_->getParam("chassis/max_x_vel", config_.max_x_vel);
-    ROS_INFO("max_x_vel = %f", config_.max_x_vel);
-
-    ros_node_->getParam("chassis/max_w_vel", config_.max_w_vel);
-    ROS_INFO("max_w_vel = %f", config_.max_w_vel);
-
-    ros_node_->getParam("chassis/max_angle", config_.max_angle);
-    ROS_INFO("max_angle = %f", config_.max_angle);
-
-    bool record_data;
-    ros_node_->getParam("chassis/record_data", record_data);
-    ROS_INFO("record_data = %d", record_data);
-
-    bool live_video;
-    ros_node_->getParam("chassis/live_video", live_video);
-    ROS_INFO("live_video = %d", live_video);
-
-    std::string video_device;
-    ros_node_->getParam("chassis/video_device", video_device);
-    ROS_INFO("video_device = %s", video_device.c_str());
-
-    ros_node_->getParam("chassis/driver_conf", driver_conf);
-    ROS_INFO("driver_conf = %s", driver_conf.c_str());
-#else
-    std::string imu_module;
-    ros_node_->declare_parameter("imu_module", "");
-    ros_node_->get_parameter("imu_module", imu_module);
-    RCLCPP_INFO(ros_node_->get_logger(), "imu_module = %s", imu_module.c_str());
-
-    std::string imu_port;
-    ros_node_->declare_parameter("imu_port", "");
-    ros_node_->get_parameter("imu_port", imu_port);
-    RCLCPP_INFO(ros_node_->get_logger(), "imu_port = %s", imu_port.c_str());
-
-    int imu_baudrate;
-    ros_node_->declare_parameter("imu_baudrate", 115200);
-    ros_node_->get_parameter("imu_baudrate", imu_baudrate);
-    RCLCPP_INFO(ros_node_->get_logger(), "imu_baudrate = %d", imu_baudrate);
-
-    ros_node_->declare_parameter("type", "");
-    ros_node_->get_parameter("type", config_.type);
-    RCLCPP_INFO(ros_node_->get_logger(), "type = %s", config_.type.c_str());
-
-    ros_node_->declare_parameter("remote_port", "/dev/ttyUSB0");
-    ros_node_->get_parameter("remote_port", config_.port);
-    RCLCPP_INFO(ros_node_->get_logger(), "remote_port = %s", config_.port.c_str());
-
-    ros_node_->declare_parameter("baudrate", 100000);
-    ros_node_->get_parameter("baudrate", config_.baudrate);
-    RCLCPP_INFO(ros_node_->get_logger(), "baudrate = %d", config_.baudrate);
-
-    ros_node_->declare_parameter("data_len", 25);
-    ros_node_->get_parameter("data_len", config_.data_len);
-    RCLCPP_INFO(ros_node_->get_logger(), "data_len = %d", config_.data_len);
-
-    ros_node_->declare_parameter("joy_var_max", 1800);
-    ros_node_->get_parameter("joy_var_max", config_.joy_var_max);
-    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_max = %d", config_.joy_var_max);
-
-    ros_node_->declare_parameter("joy_var_min", 200);
-    ros_node_->get_parameter("joy_var_min", config_.joy_var_min);
-    RCLCPP_INFO(ros_node_->get_logger(), "joy_var_min = %d", config_.joy_var_min);
-
-    ros_node_->declare_parameter("max_x_vel", 1.0);
-    ros_node_->get_parameter("max_x_vel", config_.max_x_vel);
-    RCLCPP_INFO(ros_node_->get_logger(), "max_x_vel = %f", config_.max_x_vel);
-
-    ros_node_->declare_parameter("max_w_vel", 1.0);
-    ros_node_->get_parameter("max_w_vel", config_.max_w_vel);
-    RCLCPP_INFO(ros_node_->get_logger(), "max_w_vel = %f", config_.max_w_vel);
-
-    ros_node_->declare_parameter("max_angle", 1.0);
-    ros_node_->get_parameter("max_angle", config_.max_angle);
-    RCLCPP_INFO(ros_node_->get_logger(), "max_angle = %f", config_.max_angle);
-
-    bool record_data;
-    ros_node_->declare_parameter("record_data", false);
-    ros_node_->get_parameter("record_data", record_data);
-    RCLCPP_INFO(ros_node_->get_logger(), "record_data = %d", record_data);
-
-    bool live_video;
-    ros_node_->declare_parameter("live_video", false);
-    ros_node_->get_parameter("live_video", live_video);
-    RCLCPP_INFO(ros_node_->get_logger(), "live_video = %d", live_video);
-
-    std::string video_device;
-    ros_node_->declare_parameter("video_device", "");
-    ros_node_->get_parameter("video_device", video_device);
-    RCLCPP_INFO(ros_node_->get_logger(), "video_device = %s", video_device.c_str());
-
-    ros_node_->declare_parameter("driver_conf", "");
-    ros_node_->get_parameter("driver_conf", driver_conf);
-    RCLCPP_INFO(ros_node_->get_logger(), "driver_conf = %s", driver_conf.c_str());
-#endif
-
-    Json::Value conf_json;
-    JsoncppParseRead::ReadFileToJson(driver_conf, conf_json);
-
-    std::string chip = "";
-    if (conf_json.isMember("chip") && conf_json["chip"].isString()) {
-        chip = conf_json["chip"].asString();
-    }
-    std::unique_ptr<LoadConfig> config(new LoadConfig(driver_conf));
-
-    // 雷达转速控制
-    PwmPram lidar_pwm;
-    config->LoadPwmConfig("lidar_pwm", lidar_pwm);
-    lidar_speed_ = std::make_shared<Pwm>(lidar_pwm);
-
-    if (config_.type == "sbus") {
-        // 创建遥控工厂
-        std::unique_ptr<RemoteFactory> factory(new SbusRemote());
-        // 通过工厂方法创建sbus遥控产品
-        std::shared_ptr<RemoteProduct> sbus(factory->CreateRemoteProduct(config_, false));
-        remote_ = sbus;
-    } else {
-        RCLCPP_ERROR(ros_node_->get_logger(), "please use an avlable remote");
-    }
-
-    bool sonar = false;
-    config->LoadDistanceConfig("srf04", sonar);
-    if (sonar) {
-        RCLCPP_INFO(ros_node_->get_logger(), "Enable srf04");
-        ultrasonic_ = std::make_shared<Srf04>();
-    }
-
-    bool tof = false;
-    config->LoadDistanceConfig("vl53l0x", tof);
-    if (tof) {
-        RCLCPP_INFO(ros_node_->get_logger(), "Enable vl53l0x");
-        back_distance_ = std::make_shared<Vl53l0x>();
-    }
-
-    if (chip == "Ackerman") {
-        MotoInfo moto_info;
-        config->LoadPwmConfig("moto_pwm", moto_info.moto_pwm);
-        config->LoadPinConfig("moto_ena", moto_info.s_moto_ena);
-        config->LoadPinConfig("moto_enb", moto_info.s_moto_enb);
-        config->LoadPinConfig("moto_ena", moto_info.i_moto_ena);
-        config->LoadPinConfig("moto_enb", moto_info.i_moto_enb);
-
-        PwmPram servo_pwm;
-        config->LoadPwmConfig("servo_pwm", servo_pwm);
-
-        DriverParams car_param;
-        config->LoadCarConfig("yaml", car_param);
-
-        car_is_ackerman_ = true;
-        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_info, servo_pwm);
-    } else if (chip == "Two-wheel") {
-        MotoInfo moto_left_info, moto_right_info;
-        config->LoadPwmConfig("moto_pwm_left", moto_left_info.moto_pwm);
-        config->LoadPwmConfig("moto_pwm_right", moto_right_info.moto_pwm);
-
-        config->LoadPinConfig("moto2_ena", moto_left_info.s_moto_ena);
-        config->LoadPinConfig("moto2_enb", moto_left_info.s_moto_enb);
-
-        config->LoadPinConfig("moto1_ena", moto_right_info.s_moto_ena);
-        config->LoadPinConfig("moto1_enb", moto_right_info.s_moto_enb);
-
-        DriverParams car_param;
-        config->LoadCarConfig("yaml", car_param);
-
-        car_is_ackerman_ = false;
-        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_left_info, moto_right_info);
-    } else {
-        RCLCPP_ERROR(ros_node_->get_logger(), "Not support yet!!");
-    }
+    GetRemoteConfig();
+    GetDriverConfig();
+    GetImuConfig();
+    GetOtherConfig();
 
     memset((uint8_t *)&rc_data_, 0, sizeof(rc_data_));
 
-    if (!imu_port.empty()) {
-        if (imu_module == "atk") {
-            imu_data_ptr_ = std::make_shared<AtkMs901m>(imu_port, imu_baudrate);
-            motion_ctl_->SetImuPtr(imu_data_ptr_);
-        } else if (imu_module == "zyz") {
-            imu_data_ptr_ = std::make_shared<Zyf176ex>(imu_port, imu_baudrate);
-        } else if (imu_module == "mpu6050") {
-            imu_data_ptr_ = std::make_shared<Mpu6050>(imu_port, imu_baudrate);
-        } else {
-            RCLCPP_ERROR(ros_node_->get_logger(), "%s imu is not support yet", imu_module.c_str());
-        }
-    }
-
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     if (imu_data_ptr_) {
-        ROS_INFO("%s imu start", imu_module.c_str());
+        ROS_INFO("%s imu start", imu_conf_.imu_module.c_str());
         imu_data_ptr_->Init();
         imu_pub_ = std::make_shared<ros::Publisher>(ros_node_->advertise<ImuMsg>("imu_data", 10));
     }
@@ -262,7 +53,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 
 #else
     if (imu_data_ptr_) {
-        RCLCPP_INFO(ros_node_->get_logger(), "%s imu start", imu_module.c_str());
+        RCLCPP_INFO(ros_node_->get_logger(), "%s imu start", imu_conf_.imu_module.c_str());
         imu_data_ptr_->Init();
         imu_pub_ = ros_node_->create_publisher<ImuMsg>("imu_data", 10);
     }
@@ -302,6 +93,354 @@ ChassisSrv::~ChassisSrv()
     imu_timer_->cancel();
     loop_timer_->cancel();
 #endif
+}
+
+void ChassisSrv::GetImuConfig()
+{
+#if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
+    ros_node_->getParam("chassis/imu.module", imu_conf_.imu_module);
+    ros_node_->getParam("chassis/imu.port", imu_conf_.imu_port);
+    ros_node_->getParam("chassis/imu.baudrate", imu_conf_.imu_baudrate);
+    ROS_INFO("imu_module = %s", imu_module.c_str());
+    ROS_INFO("imu_port = %s", imu_port.c_str());
+    ROS_INFO("imu_baudrate = %d", imu_baudrate);
+#else
+    ros_node_->declare_parameter("imu.module", "");
+    ros_node_->get_parameter("imu.module", imu_conf_.imu_module);
+
+    ros_node_->declare_parameter("imu.port", "");
+    ros_node_->get_parameter("imu.port", imu_conf_.imu_port);
+
+    ros_node_->declare_parameter("imu.baudrate", 115200);
+    ros_node_->get_parameter("imu.baudrate", imu_conf_.imu_baudrate);
+#endif
+
+    if (!imu_conf_.imu_port.empty()) {
+        if (imu_conf_.imu_module == "atk") {
+            imu_data_ptr_ = std::make_shared<AtkMs901m>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
+            if (motion_ctl_) {
+                motion_ctl_->SetImuPtr(imu_data_ptr_);
+            }
+        } else if (imu_conf_.imu_module == "zyz") {
+            imu_data_ptr_ = std::make_shared<Zyf176ex>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
+        } else if (imu_conf_.imu_module == "mpu6050") {
+            imu_data_ptr_ = std::make_shared<Mpu6050>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
+        } else {
+            RCLCPP_ERROR(ros_node_->get_logger(), "%s imu is not support yet", imu_conf_.imu_module.c_str());
+        }
+    }
+}
+
+void ChassisSrv::GetRemoteConfig()
+{
+#if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
+    ros_node_->getParam("chassis/remote.type", config_.type);
+    ros_node_->getParam("chassis/remote.port", config_.port);
+    ros_node_->getParam("chassis/remote.baudrate", config_.baudrate);
+    ros_node_->getParam("chassis/remote.data_len", config_.data_len);
+    ros_node_->getParam("chassis/remote.joy_var_max", config_.joy_var_max);
+    ros_node_->getParam("chassis/remote.joy_var_min", config_.joy_var_min);
+    ros_node_->getParam("chassis/remote.max_x_vel", config_.max_x_vel);
+    ros_node_->getParam("chassis/remote.max_w_vel", config_.max_w_vel);
+    ros_node_->getParam("chassis/remote.max_angle", config_.max_angle);
+#else
+    ros_node_->declare_parameter("remote.type", "");
+    ros_node_->get_parameter("remote.type", config_.type);
+
+    ros_node_->declare_parameter("remote.port", "/dev/ttyUSB0");
+    ros_node_->get_parameter("remote.port", config_.port);
+
+    ros_node_->declare_parameter("remote.baudrate", 100000);
+    ros_node_->get_parameter("remote.baudrate", config_.baudrate);
+
+    ros_node_->declare_parameter("remote.data_len", 25);
+    ros_node_->get_parameter("remote.data_len", config_.data_len);
+
+    ros_node_->declare_parameter("remote.joy_var_max", 1800);
+    ros_node_->get_parameter("remote.joy_var_max", config_.joy_var_max);
+
+    ros_node_->declare_parameter("remote.joy_var_min", 200);
+    ros_node_->get_parameter("remote.joy_var_min", config_.joy_var_min);
+
+    ros_node_->declare_parameter("remote.max_x_vel", 1.0);
+    ros_node_->get_parameter("remote.max_x_vel", config_.max_x_vel);
+
+    ros_node_->declare_parameter("remote.max_w_vel", 1.0);
+    ros_node_->get_parameter("remote.max_w_vel", config_.max_w_vel);
+
+    ros_node_->declare_parameter("remote.max_angle", 1.0);
+    ros_node_->get_parameter("remote.max_angle", config_.max_angle);
+#endif
+    if (config_.type == "sbus") {
+        // 创建遥控工厂
+        std::unique_ptr<RemoteFactory> factory(new SbusRemote());
+        // 通过工厂方法创建sbus遥控产品
+        std::shared_ptr<RemoteProduct> sbus(factory->CreateRemoteProduct(config_, false));
+        remote_ = sbus;
+        remote_type_ = REMOTE_SBUS;
+    }
+    // else if (config_.type == "gamepad") {
+    //     std::unique_ptr<RemoteFactory> factory(new GamePadRemote());
+    //     std::shared_ptr<RemoteProduct> gamepad(factory->CreateRemoteProduct(config_, false));
+    //     remote_ = gamepad;
+    //     remote_type_ = REMOTE_GAMEPAD;
+    // } else if (config_.type == "keyboard") {
+    //     // 创建遥控工厂
+    //     std::unique_ptr<RemoteFactory> factory(new KeyBoardRemote());
+    //     // 通过工厂方法创建键盘遥控产品
+    //     std::shared_ptr<RemoteProduct> key(factory->CreateRemoteProduct(config_, false));
+    //     remote_ = key;
+    //     remote_type_ = REMOTE_KEYBOARD;
+    // } else if (config_.type == "socket") {
+    //     std::unique_ptr<RemoteFactory> factory(new UdpRemote());
+    //     std::shared_ptr<RemoteProduct> udp_server(factory->CreateRemoteProduct(config_, false));
+    //     remote_ = udp_server;
+    //     remote_type_ = REMOTE_SOCKET;
+    // } else if (config_.type == "sonnyps2") {
+    //     std::unique_ptr<RemoteFactory> factory(new SonnyRemote());
+    //     std::shared_ptr<RemoteProduct> ps2(factory->CreateRemoteProduct(config_, false));
+    //     remote_ = ps2;
+    //     remote_type_ = REMOTE_SONY_PS2;
+    // } else {
+    //     RCLCPP_ERROR(ros_node_->get_logger(), "please use an avlable remote");
+    // }
+}
+
+void ChassisSrv::GetDriverConfig()
+{
+    std::string chip = "";
+    PwmPram lidar_pwm;
+    DriverParams car_param;
+#if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
+    ros_node_->getParam("chassis/driver.chip", chip);
+
+    ros_node_->getParam("chassis/driver.lidar_pwm.chip", lidar_pwm.chip);
+    ros_node_->getParam("chassis/driver.lidar_pwm.channel", lidar_pwm.channel);
+    ros_node_->getParam("chassis/driver.lidar_pwm.polarity", lidar_pwm.polarity);
+    ros_node_->getParam("chassis/driver.lidar_pwm.period", lidar_pwm.period);
+    ros_node_->getParam("chassis/driver.lidar_pwm.dutycycle", lidar_pwm.dutycycle);
+    ros_node_->getParam("chassis/driver.RotaryEncoder", car_param.RotaryChanel);
+
+    // 雷达转速控制
+    lidar_speed_ = std::make_shared<Pwm>(lidar_pwm);
+
+    ros_node_->getParam("chassis/car_param.LeftWheelRadius", car_param.LeftWheelRadius);
+    ros_node_->getParam("chassis/car_param.RightWheelRadius", car_param.RightWheelRadius);
+    ros_node_->getParam("chassis/car_param.TrendLength", car_param.TrendLength);
+    ros_node_->getParam("chassis/car_param.WheelBase", car_param.WheelBase);
+    ros_node_->getParam("chassis/car_param.Ticks1Roll", car_param.Ticks1Roll);
+    ros_node_->getParam("chassis/car_param.MaxXVel", car_param.MaxXVel);
+    ros_node_->getParam("chassis/car_param.MaxWVel", car_param.MaxWVel);
+    ros_node_->getParam("chassis/car_param.MaxAngle", car_param.MaxAngle);
+    ros_node_->getParam("chassis/car_param.ZeroAngle", car_param.ZeroAngle);
+    ros_node_->getParam("chassis/car_param.MaxXAcc", car_param.MaxXAcc);
+    ros_node_->getParam("chassis/car_param.MaxWAcc", car_param.MaxWAcc);
+    ros_node_->getParam("chassis/car_param.MaxAngerLimit", car_param.MaxAngerLimit);
+    ros_node_->getParam("chassis/car_param.MinAngerLimit", car_param.MinAngerLimit);
+    ros_node_->getParam("chassis/car_param.Proportion", car_param.Proportion);
+    ros_node_->getParam("chassis/car_param.Integration", car_param.Integration);
+    ros_node_->getParam("chassis/car_param.Differentiation", car_param.Differentiation);
+
+    if (chip == "Ackerman") {
+        MotoInfo moto_info;
+        PwmPram servo_pwm;
+        ros_node_->getParam("driver.moto_pwm.chip", moto_info.moto_pwm.chip);
+        ros_node_->getParam("driver.moto_pwm.channel", moto_info.moto_pwm.channel);
+        ros_node_->getParam("driver.moto_pwm.polarity", moto_info.moto_pwm.polarity);
+        ros_node_->getParam("driver.moto_pwm.period", moto_info.moto_pwm.period);
+        ros_node_->getParam("driver.moto_pwm.dutycycle", moto_info.moto_pwm.dutycycle);
+
+        ros_node_->getParam("driver.servo_pwm.chip", servo_pwm.chip);
+        ros_node_->getParam("driver.servo_pwm.channel", servo_pwm.channel);
+        ros_node_->getParam("driver.servo_pwm.polarity", servo_pwm.polarity);
+        ros_node_->getParam("driver.servo_pwm.period", servo_pwm.period);
+        ros_node_->getParam("driver.servo_pwm.dutycycle", servo_pwm.dutycycle);
+
+        ros_node_->getParam("driver.moto_ena", moto_info.s_moto_ena);
+        ros_node_->getParam("driver.moto_enb", moto_info.s_moto_enb);
+
+        car_is_ackerman_ = true;
+        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_info, servo_pwm);
+    } else if (chip == "Two-wheel") {
+        MotoInfo moto_left_info, moto_right_info;
+
+        ros_node_->getParam("driver.moto_pwm_left.chip", moto_left_info.moto_pwm.chip);
+        ros_node_->getParam("driver.moto_pwm_left.channel", moto_left_info.moto_pwm.channel);
+        ros_node_->getParam("driver.moto_pwm_left.polarity", moto_left_info.moto_pwm.polarity);
+        ros_node_->getParam("driver.moto_pwm_left.period", moto_left_info.moto_pwm.period);
+        ros_node_->getParam("driver.moto_pwm_left.dutycycle", moto_left_info.moto_pwm.dutycycle);
+
+        ros_node_->getParam("driver.moto_pwm_right.chip", moto_right_info.moto_pwm.chip);
+        ros_node_->getParam("driver.moto_pwm_right.channel", moto_right_info.moto_pwm.channel);
+        ros_node_->getParam("driver.moto_pwm_right.polarity", moto_right_info.moto_pwm.polarity);
+        ros_node_->getParam("driver.moto_pwm_right.period", moto_right_info.moto_pwm.period);
+        ros_node_->getParam("driver.moto_pwm_right.dutycycle", moto_right_info.moto_pwm.dutycycle);
+
+        ros_node_->getParam("driver.moto2_ena", moto_left_info.s_moto_ena);
+        ros_node_->getParam("driver.moto2_enb", moto_left_info.s_moto_enb);
+
+        ros_node_->getParam("driver.moto1_ena", moto_right_info.s_moto_ena);
+        ros_node_->getParam("driver.moto1_enb", moto_right_info.s_moto_enb);
+
+        car_is_ackerman_ = false;
+        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_left_info, moto_right_info);
+    } else {
+        RCLCPP_ERROR(ros_node_->get_logger(), "Not support yet!!");
+    }
+#else
+    ros_node_->declare_parameter("driver.chip", "");
+    ros_node_->get_parameter("driver.chip", chip);
+
+    ros_node_->declare_parameter("driver.lidar_pwm.chip", 0);
+    ros_node_->get_parameter("driver.lidar_pwm.chip", lidar_pwm.chip);
+    ros_node_->declare_parameter("driver.lidar_pwm.channel", 0);
+    ros_node_->get_parameter("driver.lidar_pwm.channel", lidar_pwm.channel);
+    ros_node_->declare_parameter("driver.lidar_pwm.polarity", false);
+    ros_node_->get_parameter("driver.lidar_pwm.polarity", lidar_pwm.polarity);
+    ros_node_->declare_parameter("driver.lidar_pwm.period", 0);
+    ros_node_->get_parameter("driver.lidar_pwm.period", lidar_pwm.period);
+    ros_node_->declare_parameter("driver.lidar_pwm.dutycycle", 0);
+    ros_node_->get_parameter("driver.lidar_pwm.dutycycle", lidar_pwm.dutycycle);
+    ros_node_->declare_parameter("driver.RotaryEncoder", car_param.RotaryChanel);
+    ros_node_->get_parameter("driver.RotaryEncoder", car_param.RotaryChanel);
+
+    // 雷达转速控制
+    lidar_speed_ = std::make_shared<Pwm>(lidar_pwm);
+
+    ros_node_->declare_parameter("car_param.LeftWheelRadius", 0.0);
+    ros_node_->get_parameter("car_param.LeftWheelRadius", car_param.LeftWheelRadius);
+    ros_node_->declare_parameter("car_param.RightWheelRadius", 0.0);
+    ros_node_->get_parameter("car_param.RightWheelRadius", car_param.RightWheelRadius);
+    ros_node_->declare_parameter("car_param.TrendLength", 0.0);
+    ros_node_->get_parameter("car_param.TrendLength", car_param.TrendLength);
+    ros_node_->declare_parameter("car_param.WheelBase", 0.0);
+    ros_node_->get_parameter("car_param.WheelBase", car_param.WheelBase);
+    ros_node_->declare_parameter("car_param.Ticks1Roll", 0.0);
+    ros_node_->get_parameter("car_param.Ticks1Roll", car_param.Ticks1Roll);
+    ros_node_->declare_parameter("car_param.MaxXVel", 0.0);
+    ros_node_->get_parameter("car_param.MaxXVel", car_param.MaxXVel);
+    ros_node_->declare_parameter("car_param.MaxWVel", 0.0);
+    ros_node_->get_parameter("car_param.MaxWVel", car_param.MaxWVel);
+    ros_node_->declare_parameter("car_param.MaxAngle", 0.0);
+    ros_node_->get_parameter("car_param.MaxAngle", car_param.MaxAngle);
+    ros_node_->declare_parameter("car_param.ZeroAngle", 0.0);
+    ros_node_->get_parameter("car_param.ZeroAngle", car_param.ZeroAngle);
+    ros_node_->declare_parameter("car_param.MaxXAcc", 0.0);
+    ros_node_->get_parameter("car_param.MaxXAcc", car_param.MaxXAcc);
+    ros_node_->declare_parameter("car_param.MaxWAcc", 0.0);
+    ros_node_->get_parameter("car_param.MaxWAcc", car_param.MaxWAcc);
+    ros_node_->declare_parameter("car_param.MaxAngerLimit", 0.0);
+    ros_node_->get_parameter("car_param.MaxAngerLimit", car_param.MaxAngerLimit);
+    ros_node_->declare_parameter("car_param.MinAngerLimit", 0.0);
+    ros_node_->get_parameter("car_param.MinAngerLimit", car_param.MinAngerLimit);
+    ros_node_->declare_parameter("car_param.Proportion", 0.0);
+    ros_node_->get_parameter("car_param.Proportion", car_param.Proportion);
+    ros_node_->declare_parameter("car_param.Integration", 0.0);
+    ros_node_->get_parameter("car_param.Integration", car_param.Integration);
+    ros_node_->declare_parameter("car_param.Differentiation", 0.0);
+    ros_node_->get_parameter("car_param.Differentiation", car_param.Differentiation);
+
+    if (chip == "Ackerman") {
+        MotoInfo moto_info;
+        PwmPram servo_pwm;
+        ros_node_->declare_parameter("driver.moto_pwm.chip", 0);
+        ros_node_->get_parameter("driver.moto_pwm.chip", moto_info.moto_pwm.chip);
+        ros_node_->declare_parameter("driver.moto_pwm.channel", 0);
+        ros_node_->get_parameter("driver.moto_pwm.channel", moto_info.moto_pwm.channel);
+        ros_node_->declare_parameter("driver.moto_pwm.polarity", false);
+        ros_node_->get_parameter("driver.moto_pwm.polarity", moto_info.moto_pwm.polarity);
+        ros_node_->declare_parameter("driver.moto_pwm.period", 0);
+        ros_node_->get_parameter("driver.moto_pwm.period", moto_info.moto_pwm.period);
+        ros_node_->declare_parameter("driver.moto_pwm.dutycycle", 0);
+        ros_node_->get_parameter("driver.moto_pwm.dutycycle", moto_info.moto_pwm.dutycycle);
+
+        ros_node_->declare_parameter("driver.servo_pwm.chip", 0);
+        ros_node_->get_parameter("driver.servo_pwm.chip", servo_pwm.chip);
+        ros_node_->declare_parameter("driver.servo_pwm.channel", 0);
+        ros_node_->get_parameter("driver.servo_pwm.channel", servo_pwm.channel);
+        ros_node_->declare_parameter("driver.servo_pwm.polarity", false);
+        ros_node_->get_parameter("driver.servo_pwm.polarity", servo_pwm.polarity);
+        ros_node_->declare_parameter("driver.servo_pwm.period", 0);
+        ros_node_->get_parameter("driver.servo_pwm.period", servo_pwm.period);
+        ros_node_->declare_parameter("driver.servo_pwm.dutycycle", 0);
+        ros_node_->get_parameter("driver.servo_pwm.dutycycle", servo_pwm.dutycycle);
+
+        ros_node_->declare_parameter("driver.moto_ena", "");
+        ros_node_->get_parameter("driver.moto_ena", moto_info.s_moto_ena);
+        ros_node_->declare_parameter("driver.moto_enb", "");
+        ros_node_->get_parameter("driver.moto_enb", moto_info.s_moto_enb);
+
+        car_is_ackerman_ = true;
+        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_info, servo_pwm);
+    } else if (chip == "Two-wheel") {
+        MotoInfo moto_left_info, moto_right_info;
+
+        ros_node_->declare_parameter("driver.moto_pwm_left.chip", 0);
+        ros_node_->get_parameter("driver.moto_pwm_left.chip", moto_left_info.moto_pwm.chip);
+        ros_node_->declare_parameter("driver.moto_pwm_left.channel", 0);
+        ros_node_->get_parameter("driver.moto_pwm_left.channel", moto_left_info.moto_pwm.channel);
+        ros_node_->declare_parameter("driver.moto_pwm_left.polarity", false);
+        ros_node_->get_parameter("driver.moto_pwm_left.polarity", moto_left_info.moto_pwm.polarity);
+        ros_node_->declare_parameter("driver.moto_pwm_left.period", 0);
+        ros_node_->get_parameter("driver.moto_pwm_left.period", moto_left_info.moto_pwm.period);
+        ros_node_->declare_parameter("driver.moto_pwm_left.dutycycle", 0);
+        ros_node_->get_parameter("driver.moto_pwm_left.dutycycle", moto_left_info.moto_pwm.dutycycle);
+
+        ros_node_->declare_parameter("driver.moto_pwm_right.chip", 0);
+        ros_node_->get_parameter("driver.moto_pwm_right.chip", moto_right_info.moto_pwm.chip);
+        ros_node_->declare_parameter("driver.moto_pwm_right.channel", 0);
+        ros_node_->get_parameter("driver.moto_pwm_right.channel", moto_right_info.moto_pwm.channel);
+        ros_node_->declare_parameter("driver.moto_pwm_right.polarity", false);
+        ros_node_->get_parameter("driver.moto_pwm_right.polarity", moto_right_info.moto_pwm.polarity);
+        ros_node_->declare_parameter("driver.moto_pwm_right.period", 0);
+        ros_node_->get_parameter("driver.moto_pwm_right.period", moto_right_info.moto_pwm.period);
+        ros_node_->declare_parameter("driver.moto_pwm_right.dutycycle", 0);
+        ros_node_->get_parameter("driver.moto_pwm_right.dutycycle", moto_right_info.moto_pwm.dutycycle);
+
+        ros_node_->declare_parameter("driver.moto2_ena", "");
+        ros_node_->get_parameter("driver.moto2_ena", moto_left_info.s_moto_ena);
+        ros_node_->declare_parameter("driver.moto2_enb", "");
+        ros_node_->get_parameter("driver.moto2_enb", moto_left_info.s_moto_enb);
+
+        ros_node_->declare_parameter("driver.moto1_ena", "");
+        ros_node_->get_parameter("driver.moto1_ena", moto_right_info.s_moto_ena);
+        ros_node_->declare_parameter("driver.moto1_enb", "");
+        ros_node_->get_parameter("driver.moto1_enb", moto_right_info.s_moto_enb);
+
+        car_is_ackerman_ = false;
+        motion_ctl_      = std::make_shared<Kinematics>(car_param, moto_left_info, moto_right_info);
+    } else {
+        RCLCPP_ERROR(ros_node_->get_logger(), "Not support yet!!");
+    }
+#endif
+}
+
+void ChassisSrv::GetOtherConfig()
+{
+    bool sonar = false;
+    bool tof = false;
+#if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
+    bool live_video;
+    ros_node_->getParam("chassis/video_device.live_video", live_video);
+
+    std::string video_device;
+    ros_node_->getParam("chassis/video_device.dev", video_device);
+
+    ros_node_->getParam("chassis/srf04", sonar);
+    ros_node_->getParam("chassis/vl53l0x", tof);
+#else
+    ros_node_->declare_parameter("srf04", false);
+    ros_node_->get_parameter("srf04", sonar);
+    ros_node_->declare_parameter("vl53l0x", false);
+    ros_node_->get_parameter("vl53l0x", tof);
+#endif
+    if (sonar) {
+        ultrasonic_ = std::make_shared<Srf04>();
+    }
+
+    if (tof) {
+        back_distance_ = std::make_shared<Vl53l0x>();
+    }
 }
 
 void ChassisSrv::CmdVelCallback(const TwistMsg::SharedPtr msg)

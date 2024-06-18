@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <spdlog/spdlog.h>
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
 #include <ros/ros.h>
 #else
@@ -44,11 +45,19 @@ typedef struct {
     Eular eular;                 // 欧拉角
 } Imu;
 
+typedef struct {
+    std::string module;
+    std::string port;
+    std::string int_chip;
+    int int_line;
+    int baudrate;
+} ImuConf;
+
 class ImuInterface
 {
 public:
-    ImuInterface(std::string port, uint32_t rate)
-        : imu_port_(port), baud_rate_(rate) {}
+    ImuInterface(ImuConf conf)
+        : imu_conf_(conf) {}
     virtual ~ImuInterface() {}
 
     virtual bool Init() = 0;
@@ -66,8 +75,7 @@ public:
     }
 
 protected:
-    std::string imu_port_;
-    uint32_t baud_rate_;
+    ImuConf imu_conf_;
     Imu imu_data_;
     std::mutex data_lock_;
 };

@@ -7,6 +7,10 @@
       port: "/dev/i2c-0"
       # 波特率
       baudrate: 921600
+      # 中断脚
+      interupt:
+        chip: ""
+        line: -1
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
       type: "sbus"

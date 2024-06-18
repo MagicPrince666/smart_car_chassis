@@ -53,7 +53,7 @@ ChassisSrv::ChassisSrv(std::shared_ptr<rclcpp::Node> node)
 
 #else
     if (imu_data_ptr_) {
-        RCLCPP_INFO(ros_node_->get_logger(), "%s imu start", imu_conf_.imu_module.c_str());
+        // RCLCPP_INFO(ros_node_->get_logger(), "%s imu start", imu_conf.imu_module.c_str());
         imu_data_ptr_->Init();
         imu_pub_ = ros_node_->create_publisher<ImuMsg>("imu_data", 10);
     }
@@ -97,36 +97,45 @@ ChassisSrv::~ChassisSrv()
 
 void ChassisSrv::GetImuConfig()
 {
+    ImuConf imu_conf;
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
-    ros_node_->getParam("chassis/imu.module", imu_conf_.imu_module);
-    ros_node_->getParam("chassis/imu.port", imu_conf_.imu_port);
-    ros_node_->getParam("chassis/imu.baudrate", imu_conf_.imu_baudrate);
+    ros_node_->getParam("chassis/imu.module", imu_conf.module);
+    ros_node_->getParam("chassis/imu.port", imu_conf.port);
+    ros_node_->getParam("chassis/imu.baudrate", imu_conf.baudrate);
+    ros_node_->getParam("chassis/imu.interupt.chip", imu_conf.int_chip);
+    ros_node_->getParam("chassis/imu.interupt.line", imu_conf.int_line);
     ROS_INFO("imu_module = %s", imu_module.c_str());
     ROS_INFO("imu_port = %s", imu_port.c_str());
     ROS_INFO("imu_baudrate = %d", imu_baudrate);
 #else
     ros_node_->declare_parameter("imu.module", "");
-    ros_node_->get_parameter("imu.module", imu_conf_.imu_module);
+    ros_node_->get_parameter("imu.module", imu_conf.module);
 
     ros_node_->declare_parameter("imu.port", "");
-    ros_node_->get_parameter("imu.port", imu_conf_.imu_port);
+    ros_node_->get_parameter("imu.port", imu_conf.port);
 
     ros_node_->declare_parameter("imu.baudrate", 115200);
-    ros_node_->get_parameter("imu.baudrate", imu_conf_.imu_baudrate);
+    ros_node_->get_parameter("imu.baudrate", imu_conf.baudrate);
+
+    ros_node_->declare_parameter("imu.interupt.chip", "");
+    ros_node_->get_parameter("imu.interupt.chip", imu_conf.int_chip);
+
+    ros_node_->declare_parameter("imu.interupt.line", -1);
+    ros_node_->get_parameter("imu.interupt.line", imu_conf.int_line);
 #endif
 
-    if (!imu_conf_.imu_port.empty()) {
-        if (imu_conf_.imu_module == "atk") {
-            imu_data_ptr_ = std::make_shared<AtkMs901m>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
+    if (!imu_conf.port.empty()) {
+        if (imu_conf.module == "atk") {
+            imu_data_ptr_ = std::make_shared<AtkMs901m>(imu_conf);
             if (motion_ctl_) {
                 motion_ctl_->SetImuPtr(imu_data_ptr_);
             }
-        } else if (imu_conf_.imu_module == "zyz") {
-            imu_data_ptr_ = std::make_shared<Zyf176ex>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
-        } else if (imu_conf_.imu_module == "mpu6050") {
-            imu_data_ptr_ = std::make_shared<Mpu6050>(imu_conf_.imu_port, imu_conf_.imu_baudrate);
+        } else if (imu_conf.module == "zyz") {
+            imu_data_ptr_ = std::make_shared<Zyf176ex>(imu_conf);
+        } else if (imu_conf.module == "mpu6050") {
+            imu_data_ptr_ = std::make_shared<Mpu6050>(imu_conf);
         } else {
-            RCLCPP_ERROR(ros_node_->get_logger(), "%s imu is not support yet", imu_conf_.imu_module.c_str());
+            RCLCPP_ERROR(ros_node_->get_logger(), "%s imu is not support yet", imu_conf.module.c_str());
         }
     }
 }

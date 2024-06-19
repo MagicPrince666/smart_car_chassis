@@ -194,7 +194,7 @@ Swap:         2.0Gi        10Mi       1.9Gi
 sudo swapoff /swapfile
 ```
 
-## 添加开机自启动脚本
+## 添加开机自启动脚本(示例)
 1. 建立frpc.service文件
 ```
 sudo vim /lib/systemd/system/frpc.service
@@ -253,4 +253,16 @@ sudo ln -s /lib/systemd/system/frpc.service /etc/systemd/system/frpc.service
 sudo systemctl start frpc.service # 启动
 sudo systemctl status frpc.service # 查看状态
 sudo systemctl enable frpc.service # 开机自启动
+```
+
+## 小车自启动脚本
+```bash
+cp src/chassis/scripts/cat_ld06_start/luban_cat_ackerman_setup.sh /home/cat
+cp src/chassis/scripts/cat_ld06_start/chassis.service /lib/systemd/system
+sudo ln -s /lib/systemd/system/chassis.service /etc/systemd/system/chassis.service
+sudo systemctl start chassis.service # 启动底盘
+sudo systemctl stop chassis.service # 停止底盘
+sudo systemctl status chassis.service # 查看状态
+sudo systemctl enable chassis.service # 开机自启动
+sudo systemctl disenable chassis.service # 关闭开机自启动
 ```

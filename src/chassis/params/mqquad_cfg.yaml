@@ -7,10 +7,10 @@
       port: "/dev/i2c-0"
       # 波特率
       baudrate: 921600
-      # 中断脚
+      # 中断脚 PI16
       interupt:
-        chip: ""
-        line: -1
+        chip: "/dev/gpiochip0"
+        line: 272
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
       type: "sbus"

@@ -97,9 +97,9 @@ KERNEL=="eth*", ATTR{address}=="00:52:8b:d5:04:48", NAME="lan"
 ```bash
 sudo cp src/chassis/60-hardware-conf.rules /etc/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
-sudo sudo src/chassis/script/mqquad_setup.sh # 解决权限问题
+sudo src/chassis/scripts/luban_cat_ackerman_setup.sh # 解决权限问题
 source install/setup.bash
-ros2 launch chassis chassis.launch.py # 单启动底盘
+ros2 launch chassis ackerman_chassis.launch # 单启动底盘
 ```
 
 ## slam建图

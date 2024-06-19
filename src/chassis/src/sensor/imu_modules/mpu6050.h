@@ -10,7 +10,7 @@
 #define __MPU6050_H__
 
 #include "driver_mpu6050_dmp.h"
-#include "gpio_key.h"
+#include "gpio.h"
 #include "imu_interface.h"
 #include <iostream>
 #include <string>
@@ -22,15 +22,13 @@
 class Mpu6050 : public ImuInterface
 {
 public:
-    Mpu6050(std::string dev, uint32_t rate);
+    Mpu6050(ImuConf conf);
     ~Mpu6050();
 
     bool Init();
 
 private:
-    GpioKey *mpu_int_;
-
-    uint8_t (*gpio_irq_)(void) = nullptr;
+    std::shared_ptr<Gpio> mpu_int_;
 
     std::thread imu_thread_;
     std::string module_name_;
@@ -42,6 +40,8 @@ private:
     void GpioInterruptDeinit();
 
     void Mpu6050Loop();
+
+    void ReadHander(const bool val, const uint64_t timestamp);
 };
 
 #endif

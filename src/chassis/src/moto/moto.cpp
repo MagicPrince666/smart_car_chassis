@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "moto.h"
+#include "gpio_sysfs.h"
 
 Moto::Moto(MotoInfo info) {
     moto_val_max_ = info.moto_pwm.period;
@@ -19,13 +20,13 @@ Moto::Moto(MotoInfo info) {
     moto_val_rang_ = moto_val_max_ - moto_val_min_;
 
     if (info.i_moto_ena != -1) {
-        moto_gpio_ena_ = std::make_shared<Gpio>(info.i_moto_ena, true);
-        moto_gpio_ena_->SetGpioValue(true);
+        moto_gpio_ena_ = std::make_shared<GpioSysfs>(info.i_moto_ena, true);
+        moto_gpio_ena_->SetValue(true);
     }
 
     if (info.i_moto_enb != -1) {
-        moto_gpio_enb_ = std::make_shared<Gpio>(info.i_moto_enb, true);
-        moto_gpio_enb_->SetGpioValue(true);
+        moto_gpio_enb_ = std::make_shared<GpioSysfs>(info.i_moto_enb, true);
+        moto_gpio_enb_->SetValue(true);
     }
 
     if (!info.s_moto_ena.empty()) {
@@ -65,13 +66,13 @@ int Moto::GoForward(uint32_t pwm_val)
 {
     // SetSpeed(0);
     if(moto_gpio_ena_) {
-        moto_gpio_ena_->SetGpioValue(false);
+        moto_gpio_ena_->SetValue(false);
     }
     if(moto_led_ena_) {
         moto_led_ena_->SetGpioValue(false);
     }
     if(moto_gpio_enb_) {
-        moto_gpio_enb_->SetGpioValue(true);
+        moto_gpio_enb_->SetValue(true);
     }
     if(moto_led_enb_) {
         moto_led_enb_->SetGpioValue(true);
@@ -83,13 +84,13 @@ int Moto::GoBack(uint32_t pwm_val)
 {
     // SetSpeed(0);
     if(moto_gpio_ena_) {
-        moto_gpio_ena_->SetGpioValue(true);
+        moto_gpio_ena_->SetValue(true);
     }
     if(moto_led_ena_) {
         moto_led_ena_->SetGpioValue(true);
     }
     if(moto_gpio_enb_) {
-        moto_gpio_enb_->SetGpioValue(false);
+        moto_gpio_enb_->SetValue(false);
     }
     if(moto_led_enb_) {
         moto_led_enb_->SetGpioValue(false);
@@ -110,13 +111,13 @@ int Moto::MotoSpeed(int32_t pwm_val)
 int Moto::Stop(void)
 {
     if(moto_gpio_ena_) {
-        moto_gpio_ena_->SetGpioValue(true);
+        moto_gpio_ena_->SetValue(true);
     }
     if(moto_led_ena_) {
         moto_led_ena_->SetGpioValue(true);
     }
     if(moto_gpio_enb_) {
-        moto_gpio_enb_->SetGpioValue(true);
+        moto_gpio_enb_->SetValue(true);
     }
     if(moto_led_enb_) {
         moto_led_enb_->SetGpioValue(true);

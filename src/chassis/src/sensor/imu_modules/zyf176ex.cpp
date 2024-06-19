@@ -2,8 +2,8 @@
 #include <cmath>
 #include <unistd.h>
 
-Zyf176ex::Zyf176ex(std::string port, uint32_t rate)
-    : ImuInterface(port, rate) {}
+Zyf176ex::Zyf176ex(ImuConf conf)
+    : ImuInterface(conf) {}
 
 Zyf176ex::~Zyf176ex()
 {
@@ -17,7 +17,7 @@ bool Zyf176ex::Init()
     // 创建通讯部件工厂,这一步可以优化到从lunch配置文件选择初始化不同的通讯部件工厂
     std::shared_ptr<CommFactory> factory(new SerialComm());
     // 通过工厂方法创建通讯产品
-    std::shared_ptr<Communication> serial(factory->CreateCommTarget(imu_port_, baud_rate_, false));
+    std::shared_ptr<Communication> serial(factory->CreateCommTarget(imu_conf_.port, imu_conf_.baudrate, false));
     serial_comm_ = serial;
 
     imu_thread_ = std::thread([](Zyf176ex *p_this) { p_this->ImuReader(); }, this);
@@ -93,6 +93,8 @@ void Zyf176ex::ImuReader()
 
                 // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "roll = %lf  pitch = %lf yaw = %lf", roll, pitch, yaw);
                 Euler2Quaternion(imu_data_.eular.roll, imu_data_.eular.pitch, imu_data_.eular.yaw, imu_data_.orientation);
+            } else {
+                break;
             }
         }
     }

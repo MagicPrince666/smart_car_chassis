@@ -2,9 +2,9 @@
   ros__parameters:
     imu:
       # mode zyz/atk/mpu6050/mpu9250
-      module: "mpu6050"
+      module: ""
       # IMU端口
-      port: "/dev/i2c-0"
+      port: "/dev/ttyS8"
       # 波特率
       baudrate: 921600
       # 中断脚
@@ -13,9 +13,9 @@
         line: -1
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
-      type: "sbus"
+      type: ""
       # 端口
-      port: "/dev/ttyS5"
+      port: "/dev/ttyS4"
       # 波特率
       baudrate: 100000
       # 1帧数据长度
@@ -29,7 +29,7 @@
       # 角速度最大值 单位rad/s
       max_w_vel: 5.0
       # 最大转向角
-      max_angle: 0.758
+      max_angle: 0.758      
     driver:
       chip: "Two-wheel"
       bts7960_lis: -1
@@ -39,20 +39,20 @@
       moto2_ena: "moto2-ena"
       moto2_enb: "moto2-enb"
       lidar_pwm:
-        chip: 6
+        chip: 3
         channel: 0
         polarity: true
         period: 50000000
         dutycycle: 20000000
       moto_pwm_left: 
-        chip: 0
-        channel: 3
+        chip: 1
+        channel: 0
         polarity: true
         period: 40000
         dutycycle: 0
       moto_pwm_right:
-        chip: 0
-        channel: 4
+        chip: 2
+        channel: 0
         polarity: true
         period: 40000
         dutycycle: 0

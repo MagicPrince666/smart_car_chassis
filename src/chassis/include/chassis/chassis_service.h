@@ -133,14 +133,6 @@ private:
 
     RemoteType remote_type_;
 
-    typedef struct {
-        std::string imu_module;
-        std::string imu_port;
-        int imu_baudrate;
-    } ImuConf;
-
-    ImuConf imu_conf_;
-
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
     ros::Time GetTimeNow();
 #else

@@ -116,7 +116,7 @@ void AtkMs901m::ImuReader()
             atk_ms901m_frame_t *res_tmp = SearchHearLE(ros_rx_buffer_ptr, atk_ms901m_buffer_.size, index);
             if (res_tmp == nullptr) {
                 // 已经处理完所有可识别的包
-                spdlog::warn("not found buffer head size = {}", atk_ms901m_buffer_.size);
+                RCLCPP_WARN(rclcpp::get_logger(__FUNCTION__), "not found buffer head size = %d", atk_ms901m_buffer_.size);
                 break;
             } else {
                 atk_ms901m_frame_t imu_frame;
@@ -127,7 +127,7 @@ void AtkMs901m::ImuReader()
                     ros_rx_buffer_ptr += index;
                     atk_ms901m_buffer_.size = lenght;
                 } else {
-                    // spdlog::info("not a full buffer size = {}", atk_ms901m_buffer_.size);
+                    // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "not a full buffer size = %d", atk_ms901m_buffer_.size);
                     break;
                 }
 
@@ -140,7 +140,7 @@ void AtkMs901m::ImuReader()
                 }
                 if (sum == imu_frame.check_sum) {
                     uint32_t buf_len = imu_frame.len + 5;
-                    // spdlog::info("buffer = {}", Bytes2String(ros_rx_buffer_ptr, buf_len).c_str());
+                    // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "buffer = %s", Bytes2String(ros_rx_buffer_ptr, buf_len).c_str());
                     atk_ms901m_buffer_.size -= buf_len;
                     std::unique_ptr<uint8_t[]> buffer(new uint8_t[atk_ms901m_buffer_.size]);
                     // 剩余未处理数据拷贝到临时变量
@@ -148,7 +148,7 @@ void AtkMs901m::ImuReader()
                     // 覆盖掉原来的buff
                     memcpy(atk_ms901m_buffer_.rx_buffer, buffer.get(), atk_ms901m_buffer_.size);
                 } else {
-                    spdlog::warn("Check sum fail");
+                    RCLCPP_WARN(rclcpp::get_logger(__FUNCTION__), "Check sum fail");
                     continue;
                 }
 
@@ -159,7 +159,7 @@ void AtkMs901m::ImuReader()
                         imu_data_.eular.roll  = *(int16_t *)(imu_frame.dat) / 32768.0 * M_PI;
                         imu_data_.eular.pitch = *(int16_t *)(imu_frame.dat + 2) / 32768.0 * M_PI;
                         imu_data_.eular.yaw   = *(int16_t *)(imu_frame.dat + 4) / 32768.0 * M_PI;
-                        // spdlog::info("roll = {}  pitch = {} yaw = {}", imu_data_.eular.roll, imu_data_.eular.pitch, imu_data_.eular.yaw);
+                        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "roll = %f  pitch = %f yaw = %f", imu_data_.eular.roll, imu_data_.eular.pitch, imu_data_.eular.yaw);
                     } break;
 
                     case ATK_MS901M_FRAME_ID_QUAT /* 四元数 */: {
@@ -198,18 +198,18 @@ void AtkMs901m::ImuReader()
                     case ATK_MS901M_FRAME_ID_REG_GYROFSR /* 获取ATK-MS901M陀螺仪满量程 */: {
                         if (imu_frame.dat[0] < 6) {
                             atk_ms901m_fsr_.gyro = imu_frame.dat[0];
-                            spdlog::info("full gyro = {}", atk_ms901m_gyro_fsr_table_[atk_ms901m_fsr_.gyro]);
+                            RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "full gyro = %d", atk_ms901m_gyro_fsr_table_[atk_ms901m_fsr_.gyro]);
                         } else {
-                            spdlog::info("get imu gyro fail {}", imu_frame.dat[0]);
+                            RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "get imu gyro fail %d", imu_frame.dat[0]);
                         }
                     } break;
 
                     case ATK_MS901M_FRAME_ID_REG_ACCFSR /* 获取ATK-MS901M加速度计满量程 */: {
                         if (imu_frame.dat[0] < 4) {
                             atk_ms901m_fsr_.accelerometer = imu_frame.dat[0];
-                            spdlog::info("full accelerometer = {}", atk_ms901m_accelerometer_fsr_table_[atk_ms901m_fsr_.accelerometer]);
+                            RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "full accelerometer = %d", atk_ms901m_accelerometer_fsr_table_[atk_ms901m_fsr_.accelerometer]);
                         } else {
-                            spdlog::error("get imu accelerometer fail {}", imu_frame.dat[0]);
+                            RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "get imu accelerometer fail %d", imu_frame.dat[0]);
                         }
                     } break;
 
@@ -271,7 +271,7 @@ void AtkMs901m::ImuReader()
                         break;
                     }
                 } else {
-                    spdlog::warn("unknow head = {:02x}{:02x}", imu_frame.head_l, imu_frame.head_h);
+                    RCLCPP_ERROR(rclcpp::get_logger(__FUNCTION__), "unknow head = %02x%02x", imu_frame.head_l, imu_frame.head_h);
                 }
             }
         }

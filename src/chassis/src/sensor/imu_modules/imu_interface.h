@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <mutex>
-#include <spdlog/spdlog.h>
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
 #include <ros/ros.h>
 #else

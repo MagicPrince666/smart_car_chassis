@@ -52,7 +52,7 @@ void Zyf176ex::ImuReader()
         std::unique_lock<std::mutex> lck(g_mtx_);
         g_cv_.wait_for(lck, std::chrono::milliseconds(100));
         if (zyz_176ex_buffer_.size < sizeof(zyz_data_t)) {
-            spdlog::warn("buffer size = {} not a full protocol", zyz_176ex_buffer_.size);
+            RCLCPP_WARN(rclcpp::get_logger(__FUNCTION__), "buffer size = %d not a full protocol", zyz_176ex_buffer_.size);
             usleep(10000);
             continue;
         }
@@ -91,7 +91,7 @@ void Zyf176ex::ImuReader()
                 imu_data_.eular.pitch = get_data.pitch * 0.01 * M_PI / 180;
                 imu_data_.eular.yaw   = get_data.yaw * 0.01 * M_PI / 180;
 
-                // spdlog::info("roll = %lf  pitch = %lf yaw = %lf", roll, pitch, yaw);
+                // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "roll = %lf  pitch = %lf yaw = %lf", roll, pitch, yaw);
                 Euler2Quaternion(imu_data_.eular.roll, imu_data_.eular.pitch, imu_data_.eular.yaw, imu_data_.orientation);
             } else {
                 break;

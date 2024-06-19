@@ -1,13 +1,14 @@
 # linux 小车
 
 ## 电路图
-![连接电路图](docs/驱动板原理图.jpg)
+![连接电路图](docs/鲁班猫0驱动板.png)
 
 ### [MangoPi MQ QUAD 智能小车.](docs/Mangopi_MQ_Quad_Two_wheel.md)
+### [LubancatzeroW 智能小车.](docs/LubanCat_Zero_W.md)
 
 * 码农不易 尊重劳动
 * 作者：大魔王与木头人
-* 功能：基于Linux 的遥控智能小车(正在更新，敬请期待)
+* 功能：基于Linux 的智能小车
 * QQ：846863428
 * TEL: 15220187476
 * email: 846863428@qq.com
@@ -19,17 +20,14 @@ If you find my work useful and you want to encourage the development of more fre
 
 **拿人家代码不star不fork的都是耍流氓**
 
-![alipay](docs/alipay.jpg)
-![wechat](docs/wechat.png)
-
 ## network_manager 连接
 ```bash
 sudo nmcli dev wifi connect OpenWrt_R619ac_2.4G password 67123236
-sudo apt install -y g++ cmake git libyaml-cpp-dev
 ```
 
 ## 安装依赖
 ```bash
+sudo apt install -y g++ cmake git libyaml-cpp-dev
 sudo apt install -y libgl1-mesa-dev libglu1-mesa-dev mesa-utils xorg swig
 sudo apt install -y libgl1-mesa-glx libgl1-mesa-dri libglx-mesa0 libqt5opengl5-dev
 sudo apt install ros-$ROS_DISTRO-rviz2
@@ -106,16 +104,10 @@ ros2 launch chassis chassis.launch.py # 单启动底盘
 
 ## slam建图
 ```bash
-ros2 launch chassis slam_bluesea_lidar.launch.py    # 阿克曼底盘，蓝海雷达
 ros2 launch chassis slam_ldlidar_ld06.launch.py    # 阿克曼底盘，乐动ld06雷达
 ros2 launch chassis slam_ldlidar.launch.py    # 阿克曼底盘，乐动ld19雷达
 ros2 launch chassis slam_ydlidar.launch.py    # 两轮差速底盘，eai s4雷达
 ros2 run nav2_map_server map_saver_cli -t map -f my_map # 地图保存
-```
-
-## 拷贝文件
-```bash
-scp src/chassis/src/motion/Kinematics.cpp orangepi@192.168.34.119:/home/orangepi/linux-car/src/chassis/src/motion
 ```
 
 ## 键盘控制

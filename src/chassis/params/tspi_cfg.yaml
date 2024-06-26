@@ -4,7 +4,7 @@
       # mode zyz/atk/mpu6050/mpu9250
       module: ""
       # IMU端口
-      port: "/dev/ttyS8"
+      port: "/dev/i2c-3"
       # 波特率
       baudrate: 921600
       # 中断脚
@@ -42,8 +42,8 @@
         chip: 3
         channel: 0
         polarity: true
-        period: 50000000
-        dutycycle: 20000000
+        period: 33333
+        dutycycle: 13333
       moto_pwm_left: 
         chip: 1
         channel: 0

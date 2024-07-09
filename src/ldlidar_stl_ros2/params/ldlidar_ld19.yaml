@@ -1,0 +1,10 @@
+/ldlaser:
+  ros__parameters:
+    product_name: LDLiDAR_LD19
+    topic_name: scan
+    port_name: /dev/ttyS3
+    frame_id: laser_link
+    laser_scan_dir: true
+    enable_angle_crop_func: false
+    angle_crop_min: 135.0
+    angle_crop_max: 225.0

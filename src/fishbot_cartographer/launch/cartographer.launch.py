@@ -24,6 +24,9 @@ def generate_launch_description():
     rviz_config_dir = os.path.join(pkg_share, 'config')+"/cartographer.rviz"
     print(f"rviz config in {rviz_config_dir}")
 
+    ROS_DISTRO=''
+    ROS_DISTRO = os.getenv('ROS_DISTRO')
+    print("Current ROS2 Version: ",ROS_DISTRO)
     
     #=====================声明三个节点，cartographer/occupancy_grid_node/rviz_node=================================
     cartographer_node = Node(
@@ -35,13 +38,22 @@ def generate_launch_description():
         arguments=['-configuration_directory', configuration_directory,
                    '-configuration_basename', configuration_basename])
 
-    cartographer_occupancy_grid_node = Node(
-        package='cartographer_ros',
-        executable='cartographer_occupancy_grid_node',
-        name='cartographer_occupancy_grid_node',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time}],
-        arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec])
+    if ROS_DISTRO == 'humble' or ROS_DISTRO == 'iron':
+        cartographer_occupancy_grid_node = Node(
+            package='cartographer_ros',
+            executable='cartographer_occupancy_grid_node',
+            name='cartographer_occupancy_grid_node',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
+            arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec])
+    elif ROS_DISTRO == 'galactic' or ROS_DISTRO == 'foxy':
+        cartographer_occupancy_grid_node = Node(
+            package='cartographer_ros',
+            executable='occupancy_grid_node',
+            name='occupancy_grid_node',
+            output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
+            arguments=['-resolution', resolution, '-publish_period_sec', publish_period_sec])
 
     rviz_node = Node(
         package='rviz2',

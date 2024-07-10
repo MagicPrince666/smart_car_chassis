@@ -104,9 +104,7 @@ ros2 launch chassis ackerman_chassis.launch.py # 单启动底盘
 
 ## slam建图
 ```bash
-ros2 launch chassis slam_ldlidar_ld06.launch.py    # 阿克曼底盘，乐动ld06雷达
-ros2 launch chassis slam_ldlidar.launch.py    # 阿克曼底盘，乐动ld19雷达
-ros2 launch chassis slam_ydlidar.launch.py    # 两轮差速底盘，eai s4雷达
+ros2 launch fishbot_cartographer cartographer.launch.py    # 开始建图
 ros2 run nav2_map_server map_saver_cli -t map -f my_map # 地图保存
 ```
 

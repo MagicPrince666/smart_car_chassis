@@ -448,7 +448,9 @@ void ChassisSrv::GetOtherConfig()
     }
 
     if (tof) {
-        back_distance_ = std::make_shared<Vl53l0x>();
+        back_distance_ = std::make_shared<VL53L0X>();
+        back_distance_->initialize();
+	    back_distance_->setTimeout(100);
     }
 }
 
@@ -519,7 +521,7 @@ void ChassisSrv::LoopCallback()
     }
 
     if (back_distance_) {
-        back_dis = back_distance_->GetDistance();
+        back_dis = back_distance_->readRangeSingleMillimeters();
         RangeMsg tof_msg;
         tof_msg.header.stamp    = GetTimeNow();
         tof_msg.header.frame_id = "tof_link";

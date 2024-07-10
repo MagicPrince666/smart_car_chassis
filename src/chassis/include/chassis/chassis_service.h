@@ -113,7 +113,7 @@ private:
     std::shared_ptr<ImuInterface> imu_data_ptr_;
     std::shared_ptr<Pwm> lidar_speed_;
     std::shared_ptr<Srf04> ultrasonic_;
-    std::shared_ptr<Vl53l0x> back_distance_;
+    std::shared_ptr<VL53L0X> back_distance_;
     std::shared_ptr<RemoteProduct> remote_;
 
     RemoteState rc_data_;

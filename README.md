@@ -103,8 +103,30 @@ ros2 launch chassis ackerman_chassis.launch.py # 单启动底盘
 ```
 
 ## slam建图
+### 前提1：确保小车底盘节点已启动
+底盘节点有多个启动脚本，确认脚本对应的底盘一致，比如阿克曼底盘，乐动雷达对应的脚本是chassis_ld06_lidar.launch.py
+前提2：确保雷达点云正常发布 ros2 topic list 可以看到/scan话题（不一定是/scan,话题名称可变，活学活用）
+前提3：确保雷达点云正常接收，rviz2可以接收点云数据并显示
+前提4：确保建图节点已安装，若未安装，请先安装，安装命令 sudo apt install ros-$ROS_DISTRO-cartographer ros-$ROS_DISTRO-cartographer-ros ros-$ROS_DISTRO-nav2-map-server
+### 启动方案1
+小车启动底盘雷达tf节点，电脑端或小车执行建图
 ```bash
-ros2 launch fishbot_cartographer cartographer.launch.py    # 开始建图
+# 第一步，启动小车底盘，必须在小车端操作
+source install/setup.bash # 编译源码一定要source工作空间下的install/setup.bash
+sudo src/chassis/scripts/luban_cat_ackerman_setup.sh # 解决权限问题，执行一次即可，重启后必须先执行一遍
+ros2 launch chassis chassis_ld06_lidar.launch.py # 一键启动底盘雷达tf节点
+# 第二步 启动建图节点，可以在小车端执行，已经在互通的电脑端运行
+ros2 launch fishbot_cartographer cartographer.launch.py    # 开始建图，这是自定义的包，包在工作空间的src/fishbot_cartographer下
+ros2 run nav2_map_server map_saver_cli -t map -f my_map # 地图保存
+```
+
+### 启动方案2
+小车一键建图
+```bash
+# 启动小车一键建图，必须在小车端操作
+source install/setup.bash # 编译源码一定要source工作空间下的install/setup.bash
+sudo src/chassis/scripts/luban_cat_ackerman_setup.sh # 解决权限问题，执行一次即可，重启后必须先执行一遍
+ros2 launch chassis slam_ldlidar_ld06.launch.py    # 开始建图，这是自定义的包，包在工作空间的src/fishbot_cartographer下
 ros2 run nav2_map_server map_saver_cli -t map -f my_map # 地图保存
 ```
 

@@ -105,9 +105,20 @@ ros2 launch chassis ackerman_chassis.launch.py # 单启动底盘
 ## slam建图
 ### 前提1：确保小车底盘节点已启动
 底盘节点有多个启动脚本，确认脚本对应的底盘一致，比如阿克曼底盘，乐动雷达对应的脚本是chassis_ld06_lidar.launch.py
-前提2：确保雷达点云正常发布 ros2 topic list 可以看到/scan话题（不一定是/scan,话题名称可变，活学活用）
-前提3：确保雷达点云正常接收，rviz2可以接收点云数据并显示
-前提4：确保建图节点已安装，若未安装，请先安装，安装命令 sudo apt install ros-$ROS_DISTRO-cartographer ros-$ROS_DISTRO-cartographer-ros ros-$ROS_DISTRO-nav2-map-server
+
+### 前提2：确保雷达点云正常发布 ros2 topic list 可以看到/scan话题
+不一定是/scan,话题名称可变，活学活用
+
+### 前提3：确保雷达点云正常接收
+rviz2可以接收点云数据并显示
+
+### 前提4：确保建图节点已安装
+若未安装，请先安装，安装命令
+```bash
+sudo apt install ros-$ROS_DISTRO-cartographer ros-$ROS_DISTRO-cartographer-ros ros-$ROS_DISTRO-nav2-map-server
+```
+雷达建图脚本放在了chassis的launch目录下，可以酌情移动到别的包里面
+
 ### 启动方案1
 小车启动底盘雷达tf节点，电脑端或小车执行建图
 ```bash

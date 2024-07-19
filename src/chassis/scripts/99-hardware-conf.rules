@@ -1,6 +1,4 @@
-SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="fts_ts", MODE:="0666"
-SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="pwm-beeper", MODE:="0666"
-SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Goodix Capacitive TouchScreen", MODE:="0666"
+SUBSYSTEM=="input", KERNEL=="event*",  ACTION=="add", MODE:="0666"
 SUBSYSTEM=="hidraw", KERNEL=="hidraw*", ACTION=="add", ATTRS{idVendor}=="03f7", ATTRS{idProduct}=="1218", ATTRS{product}=="iBox2", MODE:="0666", SYMLINK+="cputools%n"
 SUBSYSTEM=="tty", KERNEL=="ttyS*", MODE:="0666"
 KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE:="0666"

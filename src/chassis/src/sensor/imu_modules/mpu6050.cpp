@@ -226,8 +226,8 @@ void Mpu6050::Mpu6050Loop()
         }
 
         /* output */
-        RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "fifo %d.", fifo_len);
-        RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "pitch: %f\troll: %f\tyaw: %f", gs_pitch[0], gs_roll[0], gs_yaw[0]);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "fifo %d.", fifo_len);
+        // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "pitch: %f\troll: %f\tyaw: %f", gs_pitch[0], gs_roll[0], gs_yaw[0]);
 
         // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "acc x[0] is %fg.", gs_accel_g[0][0]);
         // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "acc y[0] is %fg.", gs_accel_g[0][1]);
@@ -237,12 +237,14 @@ void Mpu6050::Mpu6050Loop()
         // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "gyro y[0] is %fdps.", gs_gyro_dps[0][1]);
         // RCLCPP_INFO(rclcpp::get_logger(__FUNCTION__), "gyro z[0] is %fdps.", gs_gyro_dps[0][2]);
 
-        Eular euler;
-        euler.pitch = gs_pitch[0] * M_PI / 180.0;
-        euler.roll  = gs_roll[0] * M_PI / 180.0;
-        euler.yaw   = gs_yaw[0] * M_PI / 180.0;
         data_lock_.lock();
-        Euler2Quaternion(euler.roll, euler.pitch, euler.yaw, imu_data_.orientation);
+        imu_data_.eular.pitch = gs_pitch[0] * M_PI / 180.0;
+        imu_data_.eular.roll  = gs_roll[0] * M_PI / 180.0;
+        imu_data_.eular.yaw   = gs_yaw[0] * M_PI / 180.0;
+        imu_data_.orientation.w         = gs_quat[0][0];
+        imu_data_.orientation.x         = gs_quat[0][1];
+        imu_data_.orientation.y         = gs_quat[0][2];
+        imu_data_.orientation.z         = gs_quat[0][3];
         imu_data_.linear_acceleration.x = gs_accel_g[0][0];
         imu_data_.linear_acceleration.y = gs_accel_g[0][1];
         imu_data_.linear_acceleration.z = gs_accel_g[0][2];

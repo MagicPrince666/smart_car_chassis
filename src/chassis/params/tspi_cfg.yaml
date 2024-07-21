@@ -9,8 +9,8 @@
       baudrate: 921600
       # 中断脚
       interupt:
-        chip: ""
-        line: -1
+        chip: "/dev/gpiochip3"
+        line: 3
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
       type: ""
@@ -43,7 +43,7 @@
         channel: 0
         polarity: true
         period: 33333
-        dutycycle: 13333
+        dutycycle: 16666
       moto_pwm_left: 
         chip: 1
         channel: 0

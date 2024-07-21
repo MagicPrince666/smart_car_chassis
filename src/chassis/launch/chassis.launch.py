@@ -6,7 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    chassis_cfg = os.path.join(get_package_share_directory('chassis'), 'params', 'mqquad_cfg.yaml')
+    chassis_cfg = os.path.join(get_package_share_directory('chassis'), 'params', 'tspi_cfg.yaml')
 
     ROS_DISTRO=''
     ROS_DISTRO = os.getenv('ROS_DISTRO')

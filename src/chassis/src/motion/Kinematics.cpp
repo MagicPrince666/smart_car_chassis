@@ -138,7 +138,7 @@ int Kinematics::timeOutCallBack()
         }
         if (speeds != current_speeds_[1]) {
             current_speeds_[1] = speeds;
-            show               = true;
+            // show               = true;
         }
         moto_ctrl_[1]->MotoSpeed(out_motor_speed_[1]);
     }
@@ -157,7 +157,7 @@ int Kinematics::timeOutCallBack()
         }
         if (speeds != current_speeds_[0]) {
             current_speeds_[0] = speeds;
-            show               = true;
+            // show               = true;
         }
         moto_ctrl_[0]->MotoSpeed(out_motor_speed_[0]);
     }

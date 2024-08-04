@@ -1,0 +1,13 @@
+#!/bin/sh
+
+killall brcm_patchram_plus1
+
+echo 0 > /sys/class/rfkill/rfkill0/state
+sleep 2
+echo 1 > /sys/class/rfkill/rfkill0/state
+sleep 2
+
+./brcm_patchram_plus1 --bd_addr_rand --enable_hci --no2bytes --use_baudrate_for_download  --tosleep  200000 --baudrate 1500000 --patchram  /vendor/etc/firmware/BCM43430A1.hcd /dev/ttyS1 &
+# ./brcm_patchram_plus1 --patchram /vendor/etc/firmware/BCM43430A1.hcd --baudrate 1500000 --enable_lpm --enable_hci --no2bytes /dev/ttyS1
+# ./brcm_patchram_plus1 -d --enable_hci --no2bytes --tosleep 200000 --use_baudrate_for_download --baudrate 1500000 --bd_addr "A4:51:29:00:00:0C" --patchram /vendor/etc/firmware/BCM43430A1.hcd /dev/ttyS1
+hciconfig hci0 up

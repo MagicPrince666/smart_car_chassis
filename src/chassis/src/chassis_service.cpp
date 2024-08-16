@@ -18,6 +18,7 @@
 #include "loadconfig.h"
 #include "mpu6050.h"
 #include "sbus.h"
+#include "socket.h"
 #include "zyf176ex.h"
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
@@ -187,32 +188,15 @@ void ChassisSrv::GetRemoteConfig()
         std::shared_ptr<RemoteProduct> sbus(factory->CreateRemoteProduct(config_, false));
         remote_ = sbus;
         remote_type_ = REMOTE_SBUS;
+    } else if (config_.type == "socket") {
+        RCLCPP_INFO(ros_node_->get_logger(), "socket remote");
+        std::unique_ptr<RemoteFactory> factory(new UdpRemote());
+        std::shared_ptr<RemoteProduct> udp_server(factory->CreateRemoteProduct(config_, false));
+        remote_ = udp_server;
+        remote_type_ = REMOTE_SOCKET;
+    } else {
+        RCLCPP_ERROR(ros_node_->get_logger(), "please use an avlable remote");
     }
-    // else if (config_.type == "gamepad") {
-    //     std::unique_ptr<RemoteFactory> factory(new GamePadRemote());
-    //     std::shared_ptr<RemoteProduct> gamepad(factory->CreateRemoteProduct(config_, false));
-    //     remote_ = gamepad;
-    //     remote_type_ = REMOTE_GAMEPAD;
-    // } else if (config_.type == "keyboard") {
-    //     // 创建遥控工厂
-    //     std::unique_ptr<RemoteFactory> factory(new KeyBoardRemote());
-    //     // 通过工厂方法创建键盘遥控产品
-    //     std::shared_ptr<RemoteProduct> key(factory->CreateRemoteProduct(config_, false));
-    //     remote_ = key;
-    //     remote_type_ = REMOTE_KEYBOARD;
-    // } else if (config_.type == "socket") {
-    //     std::unique_ptr<RemoteFactory> factory(new UdpRemote());
-    //     std::shared_ptr<RemoteProduct> udp_server(factory->CreateRemoteProduct(config_, false));
-    //     remote_ = udp_server;
-    //     remote_type_ = REMOTE_SOCKET;
-    // } else if (config_.type == "sonnyps2") {
-    //     std::unique_ptr<RemoteFactory> factory(new SonnyRemote());
-    //     std::shared_ptr<RemoteProduct> ps2(factory->CreateRemoteProduct(config_, false));
-    //     remote_ = ps2;
-    //     remote_type_ = REMOTE_SONY_PS2;
-    // } else {
-    //     RCLCPP_ERROR(ros_node_->get_logger(), "please use an avlable remote");
-    // }
 }
 
 void ChassisSrv::GetDriverConfig()
@@ -533,37 +517,39 @@ void ChassisSrv::LoopCallback()
         tof_pub_->publish(tof_msg);
     }
 
-    if (!rc_data_.adslx || !rc_data_.adsly || !rc_data_.adsrx || !rc_data_.adsry) {
-        RCLCPP_WARN(ros_node_->get_logger(), "Driver lx = %f, ly = %f, rx = %f, ry = %f",
-                     rc_data_.adslx, rc_data_.adsly, rc_data_.adsrx, rc_data_.adsry);
-        return;
-    }
+    if (remote_type_ == REMOTE_SBUS) {
+        if (!rc_data_.adslx || !rc_data_.adsly || !rc_data_.adsrx || !rc_data_.adsry) {
+            RCLCPP_WARN(ros_node_->get_logger(), "Driver lx = %f, ly = %f, rx = %f, ry = %f",
+                        rc_data_.adslx, rc_data_.adsly, rc_data_.adsrx, rc_data_.adsry);
+            return;
+        }
 
-    if (rc_data_.ads[4] > 0.5) { // 使能开关
-        motion_ctl_->DriverCtrl(0.0, 0.0);
-        if (driver_enable_) {
-            driver_enable_ = false;
-            RCLCPP_WARN(ros_node_->get_logger(), "Driver disable");
+        if (rc_data_.ads[4] > 0.5) { // 使能开关
+            motion_ctl_->DriverCtrl(0.0, 0.0);
+            if (driver_enable_) {
+                driver_enable_ = false;
+                RCLCPP_WARN(ros_node_->get_logger(), "Driver disable");
+            }
+            return;
+        } else {
+            if (!driver_enable_) {
+                driver_enable_ = true;
+                RCLCPP_INFO(ros_node_->get_logger(), "Driver enable");
+            }
         }
-        return;
-    } else {
-        if (!driver_enable_) {
-            driver_enable_ = true;
-            RCLCPP_INFO(ros_node_->get_logger(), "Driver enable");
-        }
-    }
 
-    if (rc_data_.ads[5] > 0.5) { // 避障开关
-        font_dis = 1000;
-        back_dis = 1000;
-        if (avoid_obstacles_) {
-            avoid_obstacles_ = false;
-            RCLCPP_WARN(ros_node_->get_logger(), "Avoid obstacles disable");
-        }
-    } else {
-        if (!avoid_obstacles_) {
-            avoid_obstacles_ = true;
-            RCLCPP_INFO(ros_node_->get_logger(), "Avoid obstacles enable");
+        if (rc_data_.ads[5] > 0.5) { // 避障开关
+            font_dis = 1000;
+            back_dis = 1000;
+            if (avoid_obstacles_) {
+                avoid_obstacles_ = false;
+                RCLCPP_WARN(ros_node_->get_logger(), "Avoid obstacles disable");
+            }
+        } else {
+            if (!avoid_obstacles_) {
+                avoid_obstacles_ = true;
+                RCLCPP_INFO(ros_node_->get_logger(), "Avoid obstacles enable");
+            }
         }
     }
 

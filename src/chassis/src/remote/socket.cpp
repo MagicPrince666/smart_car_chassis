@@ -11,6 +11,7 @@
 
 UdpSocket::UdpSocket(RemoteConfig_t config, bool debug) : RemoteProduct(config, debug) {
     std::cout << "UdpSocket init" << std::endl;
+    Init();
 }
 
 UdpSocket::~UdpSocket()
@@ -44,7 +45,6 @@ int UdpSocket::Init()
 
 int UdpSocket::GetClientData()
 {
-    char str[INET_ADDRSTRLEN];
     char buf[MAXLINE];
     struct sockaddr_in cliaddr;
     socklen_t cliaddr_len;
@@ -53,9 +53,11 @@ int UdpSocket::GetClientData()
     if (btyes == -1) {
         perror("recvfrom error");
     }
-    printf("Recvfrom %s port %d\n",
-           inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)), ntohs(cliaddr.sin_port));
-    
+    // char str[INET_ADDRSTRLEN];
+    // printf("Recvfrom %s port %d\n",
+    //        inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)), ntohs(cliaddr.sin_port));
+
+    std::lock_guard<std::mutex> mylock_guard(data_lock_);
     memcpy((char *)&rc_data_, buf, sizeof(rc_data_));
 
     return 0;
@@ -63,6 +65,7 @@ int UdpSocket::GetClientData()
 
 bool UdpSocket::Request(struct RemoteState &data)
 {
+    std::lock_guard<std::mutex> mylock_guard(data_lock_);
     data = rc_data_;
     return true;
 }

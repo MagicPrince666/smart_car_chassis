@@ -11,6 +11,7 @@
 
 #include "RemoteFactory.h"
 #include <iostream>
+#include <mutex>
 
 #define MAXLINE 80
 #define SERV_PORT 5555
@@ -28,6 +29,7 @@ private:
     int GetClientData();
     int socket_fd_;
     RemoteState rc_data_;
+    std::mutex data_lock_;
 };
 
 // 生产udp遥控工厂

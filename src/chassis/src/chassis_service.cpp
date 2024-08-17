@@ -558,14 +558,16 @@ void ChassisSrv::LoopCallback()
         vspeed = 0.0;
     }
 
-    if (font_dis > 0 && font_dis <= 400 && vspeed > 0) { // 前避障
-        RCLCPP_WARN(ros_node_->get_logger(), "Obstacle ahead distance = %d mm", font_dis);
-        vspeed = 0.0;
-    }
+    if (remote_type_ == REMOTE_SBUS) {
+        if (font_dis > 0 && font_dis <= 400 && vspeed > 0) { // 前避障
+            RCLCPP_WARN(ros_node_->get_logger(), "Obstacle ahead distance = %d mm", font_dis);
+            vspeed = 0.0;
+        }
 
-    if (back_dis > 20 && back_dis <= 100 && vspeed < 0) { // 后避障
-        RCLCPP_WARN(ros_node_->get_logger(), "Obstacle behind distance = %d mm", back_dis);
-        vspeed = 0.0;
+        if (back_dis > 20 && back_dis <= 100 && vspeed < 0) { // 后避障
+            RCLCPP_WARN(ros_node_->get_logger(), "Obstacle behind distance = %d mm", back_dis);
+            vspeed = 0.0;
+        }
     }
     if (vspeed > -0.01 && vspeed < 0.01) {
         vspeed = 0.0;

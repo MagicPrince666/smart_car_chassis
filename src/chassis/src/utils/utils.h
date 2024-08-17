@@ -11,6 +11,11 @@
 
 #include <iostream>
 #include <vector>
+#if defined(__unix__)
+#include <pwd.h>
+#elif defined(_WIN32)
+#include <windows.h>
+#endif
 
 namespace Utils {
  /**
@@ -20,6 +25,11 @@ namespace Utils {
  */
 std::string ScanIioDevice(std::string name);
 
+/**
+ * @brief 搜索设备 输入 设备
+ * @param name 模块名称
+ * @return std::string 返回输入设备
+*/
 std::string ScanInputDevice(std::string name);
 
 /**
@@ -51,6 +61,58 @@ std::string Bytes2String(uint8_t *data, uint32_t len);
  * @return uint16_t 
  */
 uint16_t CheckCRC(uint8_t *pContent, uint16_t usLength);
+
+/**
+ * @brief 获取当前秒级时间戳
+ * @return uint32_t 
+ */
+int64_t GetCurrentSecTime();
+
+/**
+ * @brief 获取当前毫秒级时间戳
+ * @return uint32_t 
+ */
+int64_t GetCurrentMsTime();
+
+/**
+ * @brief 检查文件是否存在
+ * @param name 
+ * @return true 
+ * @return false 
+ */
+bool FileExists(const std::string name);
+
+/**
+ * @brief 获取特定时区的时分
+ * @param zones 
+ * @return std::string 
+ */
+std::string getCurrentTime(int32_t zones);
+
+/**
+ * @brief 获取当前用户
+ * @return std::string 
+ */
+std::string getCurrentUser();
+
+/**
+ * @brief 管道运行命令
+ * @param cmdline 
+ * @param recv 
+ */
+void Execute(std::string cmdline, std::string &recv);
+
+/**
+ * @brief 超级用户运行命令
+ * @param cmdline 
+ */
+void SuperExecute(std::string cmdline, std::string passwd);
+
+/**
+ * @brief 
+ * @param line 
+ */
+void Addr2Line(std::string exe, std::vector<std::string>& strs);
 }
 
 #endif

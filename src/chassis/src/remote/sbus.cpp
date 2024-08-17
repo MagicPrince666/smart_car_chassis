@@ -17,6 +17,7 @@
 
 #include "sbus.h"
 #include "xepoll.h"
+#include "utils.h"
 
 Sbus::Sbus(RemoteConfig_t config, bool debug) : RemoteProduct(config, debug)
 {
@@ -104,6 +105,7 @@ int Sbus::OpenSerial(std::string SerialName, int Bitrate)
 
 int Sbus::GetData()
 {
+    last_update_time_ = Utils::GetCurrentMsTime();
     uint8_t sbus_buf[100];
     int len = read(sbus_fd_, sbus_buf, sizeof(sbus_buf));
     if (len > 0) {
@@ -181,6 +183,12 @@ bool Sbus::Request(struct RemoteState &data)
         data.adsrx = 0.5;
         data.adsry = 0.5;
         return false;
+    }
+    uint64_t current  = Utils::GetCurrentMsTime();
+    if ((current - last_update_time_) > 1000) {
+        rc_data_.lost_signed = true;
+    } else {
+        rc_data_.lost_signed = false;
     }
     data.lose_signal = rc_data_.lost_signed; // 失控标识
     data.adslx       = rc_data_.percent[3];   // 左摇杆x轴

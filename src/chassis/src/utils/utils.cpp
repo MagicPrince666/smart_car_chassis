@@ -8,6 +8,11 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+#include <unistd.h>
 
 #include "utils.h"
 
@@ -63,7 +68,7 @@ std::string Utils::ScanInputDevice(std::string name)
                 }
             } else {
                 // 搜索完了，没有找到对应设备
-                std::cout << "input device scan end\n";
+                // std::cout << "input device scan end\n";
                 break;
             }
         }
@@ -125,7 +130,7 @@ std::string Utils::Bytes2String(uint8_t *data, uint32_t len)
     char temp[512];
     std::string str("");
     for (size_t i = 0; i < len; i++) {
-        sprintf(temp, "%02x ", data[i]);
+        snprintf(temp, sizeof(temp) - 1, "%02x ", data[i]);
         str.append(temp);
     }
     return str;
@@ -196,4 +201,118 @@ uint16_t Utils::CheckCRC(uint8_t *pContent, uint16_t usLength)
     }
     // 返回CRC结果
     return usCRCVal;
+}
+
+int64_t Utils::GetCurrentSecTime()
+{
+    auto current_time            = std::chrono::high_resolution_clock::now();
+    auto duration_in_nanoseconds = std::chrono::duration_cast<std::chrono::seconds>(current_time.time_since_epoch());
+    return duration_in_nanoseconds.count();
+}
+
+int64_t Utils::GetCurrentMsTime()
+{
+    auto current_time            = std::chrono::high_resolution_clock::now();
+    auto duration_in_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time.time_since_epoch());
+    return duration_in_milliseconds.count();
+}
+
+bool Utils::FileExists(const std::string name)
+{
+    struct stat buffer;
+    return (stat(name.c_str(), &buffer) == 0);
+}
+
+std::string Utils::getCurrentTime(int32_t zones)
+{
+    std::time_t result = std::time(nullptr) + zones * 3600;
+    auto sec           = std::chrono::seconds(result);
+    std::chrono::time_point<std::chrono::system_clock> now(sec);
+    auto timet     = std::chrono::system_clock::to_time_t(now);
+    auto localTime = *std::gmtime(&timet);
+
+    std::stringstream ss;
+    std::string str;
+    ss << std::put_time(&localTime, "%H:%M");
+    ss >> str;
+
+    return str;
+}
+
+std::string Utils::getCurrentUser()
+{
+#if defined(__unix__)
+    uid_t userid;
+    struct passwd* pwd;
+    userid = getuid();
+    pwd = getpwuid(userid);
+    return pwd->pw_name;
+#elif defined(_WIN32)
+    TCHAR name[UNLEN + 1];
+    DWORD size = UNLEN + 1;
+    if (GetUserName(name, &size)) {
+        return std::string(name, size);
+    }
+#endif
+    return "";
+}
+
+void Utils::Execute(std::string cmdline, std::string &recv)
+{
+#if defined(__unix__)
+    FILE *stream = NULL;
+    char buff[1024];
+    char recv_buff[256]      = {0};
+
+    memset(recv_buff, 0, sizeof(recv_buff));
+
+    if ((stream = popen(cmdline.c_str(), "r")) != NULL) {
+        while (fgets(buff, 1024, stream)) {
+            strcat(recv_buff, buff);
+        }
+    }
+    recv = recv_buff;
+    pclose(stream);
+#endif
+}
+
+void Utils::SuperExecute(std::string cmdline, std::string passwd)
+{
+#if defined(__unix__)
+    char cmd[256] = {0};
+    int len = snprintf(cmd, sizeof(cmd), "echo %s | sudo -S %s", passwd.c_str(), cmdline.c_str());
+    cmd[len] = 0;
+    system(cmd);
+#endif
+}
+
+void Utils::Addr2Line(std::string exe, std::vector<std::string>& strs)
+{
+#if defined(__unix__)
+    char str[1024] = {0};
+    for (uint32_t i = 0; i < strs.size(); i++) {
+        std::string line = strs[i];
+        std::string::size_type index = line.find("(+"); // found start stuck
+        line = line.substr(index + 1, line.size() - index - 1);
+        if (index != std::string::npos) {
+            index = line.find(")"); // foud end
+            if (index != std::string::npos) {
+                line = line.substr(0, index);
+                int len = snprintf(str, sizeof(str), "addr2line -e %s %s", exe.c_str(), line.c_str());
+                str[len] = 0;
+                // std::cout << "Run " << str << std::endl;
+                std::string recv;
+                Execute(str, recv);
+                std::ofstream outfile;
+                if (recv.find("??") == std::string::npos) {
+                    outfile.open("coredump.log", std::ios::out | std::ios::app);
+                    if (outfile.is_open()) {
+                        outfile << recv;
+                        outfile.close();
+                    }
+                }
+            }
+        }
+    }
+#endif
 }

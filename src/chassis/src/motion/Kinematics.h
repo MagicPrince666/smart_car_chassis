@@ -109,11 +109,6 @@ private:
     int timeOutCallBack();
 
     /**
-     * 获取当前毫秒时间
-     */
-    uint64_t GetCurrentTimeMs();
-
-    /**
      * @brief 运动学逆解
      * @param line_speed 输入线速度
      * @param angle_speed 输入角速度

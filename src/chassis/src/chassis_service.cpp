@@ -554,7 +554,7 @@ void ChassisSrv::LoopCallback()
     }
 
     float vspeed = (1 - 2.0 * rc_data_.adsry) * config_.max_x_vel; // 右摇杆y轴 线速度
-    if (rc_data_.adsry == 0) {
+    if (rc_data_.lose_signal) {
         vspeed = 0.0;
     }
 

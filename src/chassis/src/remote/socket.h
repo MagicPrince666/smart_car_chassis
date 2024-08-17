@@ -30,6 +30,7 @@ private:
     int socket_fd_;
     RemoteState rc_data_;
     std::mutex data_lock_;
+    uint64_t last_update_time_;
 };
 
 // 生产udp遥控工厂

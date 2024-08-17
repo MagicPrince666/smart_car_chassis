@@ -8,6 +8,7 @@
 #include "remote.h"
 #include "socket.h"
 #include "xepoll.h"
+#include "utils.h"
 
 UdpSocket::UdpSocket(RemoteConfig_t config, bool debug) : RemoteProduct(config, debug) {
     std::cout << "UdpSocket init" << std::endl;
@@ -58,6 +59,7 @@ int UdpSocket::GetClientData()
     //        inet_ntop(AF_INET, &cliaddr.sin_addr, str, sizeof(str)), ntohs(cliaddr.sin_port));
 
     std::lock_guard<std::mutex> mylock_guard(data_lock_);
+    last_update_time_ = Utils::GetCurrentMsTime();
     memcpy((char *)&rc_data_, buf, sizeof(rc_data_));
 
     return 0;
@@ -66,6 +68,12 @@ int UdpSocket::GetClientData()
 bool UdpSocket::Request(struct RemoteState &data)
 {
     std::lock_guard<std::mutex> mylock_guard(data_lock_);
+    uint64_t current  = Utils::GetCurrentMsTime();
+    if ((current - last_update_time_) > 1000) {
+        rc_data_.lose_signal = true;
+    } else {
+        rc_data_.lose_signal = false;
+    }
     data = rc_data_;
     return true;
 }

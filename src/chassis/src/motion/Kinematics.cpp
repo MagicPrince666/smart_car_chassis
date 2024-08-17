@@ -17,6 +17,7 @@
 
 #include "Kinematics.h"
 #include "xepoll.h"
+#include "utils.h"
 
 Kinematics::Kinematics(DriverParams car_param, MotoInfo moto_ctrl, PwmPram servo_ctrl)
     : car_param_(car_param)
@@ -104,20 +105,13 @@ bool Kinematics::InitTimer(void)
     return true;
 }
 
-uint64_t Kinematics::GetCurrentTimeMs()
-{
-    auto current_time             = std::chrono::high_resolution_clock::now();
-    auto duration_in_milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(current_time.time_since_epoch());
-    return duration_in_milliseconds.count();
-}
-
 // M法测速
 int Kinematics::timeOutCallBack()
 {
     uint64_t value;
     bool show         = false;
     int ret           = read(timer_fd_, &value, sizeof(uint64_t));
-    uint64_t current  = GetCurrentTimeMs();
+    uint64_t current  = Utils::GetCurrentMsTime();
     float dt          = (float)(current - last_update_time_) / 1000.0; // 计算两次读取之间的时间差
     last_update_time_ = current;                                       // 更新上一次更新时间
     if (dt == 0) {

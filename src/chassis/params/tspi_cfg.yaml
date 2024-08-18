@@ -13,9 +13,9 @@
         line: 3
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
-      type: ""
+      type: "socket"
       # 端口
-      port: "/dev/ttyS4"
+      port: "0.0.0.0"
       # 波特率
       baudrate: 100000
       # 1帧数据长度
@@ -29,7 +29,7 @@
       # 角速度最大值 单位rad/s
       max_w_vel: 5.0
       # 最大转向角
-      max_angle: 0.758      
+      max_angle: 0.523     
     driver:
       chip: "Two-wheel"
       bts7960_lis: -1

@@ -153,13 +153,13 @@ typedef struct
 
 typedef struct
 {
-    uint8_t head_l = 0; /* 低位帧头 */
-    uint8_t head_h = 0; /* 高位帧头 */
-    // uint16_t head                              = 0;
-    uint8_t id                                 = 0;   /* 帧ID */
-    uint8_t len                                = 0;   /* 数据长度 */
-    uint8_t dat[ATK_MS901M_FRAME_DAT_MAX_SIZE] = {0}; /* 数据 */
-    uint8_t check_sum                          = 0;   /* 校验和 */
+    uint8_t head_l; /* 低位帧头 */
+    uint8_t head_h; /* 高位帧头 */
+    // uint16_t head;
+    uint8_t id;   /* 帧ID */
+    uint8_t len;   /* 数据长度 */
+    uint8_t dat[ATK_MS901M_FRAME_DAT_MAX_SIZE]; /* 数据 */
+    uint8_t check_sum;   /* 校验和 */
 } atk_ms901m_frame_t;                                 /* ATK-MS901M UART通讯帧结构体 */
 
 class AtkMs901m : public ImuInterface
@@ -229,8 +229,18 @@ private:
         uint8_t rx_buffer[255];
         uint8_t size; // buf长度
     } atk_ms901m_buffer_;
+    atk_ms901m_frame_t imu_frame_;
 
+    std::mutex data_lock_;
     std::thread imu_thread_;
+    Imu imu_data_;
+    atk_ms901m_magnetometer_data_t magnetometer_;
+    atk_ms901m_barometer_data_t barometer_;
+    atk_ms901m_port_data_t port_dat_;
+    uint16_t port1_pulse_;
+    uint16_t port1_period_;
+    uint16_t port3_pulse_;
+    uint16_t port3_period_;
 
     std::condition_variable g_cv_; // 全局条件变量
     std::mutex g_mtx_;             // 全局互斥锁.
@@ -243,13 +253,15 @@ private:
     uint8_t WriteRegById(uint8_t id, uint8_t len, uint8_t *dat);                                 /* 通过帧ID写入ATK-MS901M寄存器 */
     uint8_t GetPort(atk_ms901m_port_data_t *port_dat, uint32_t timeout);                         /* 获取ATK-MS901M端口数据 */
     uint8_t GetLedState(atk_ms901m_led_state_t *state, uint32_t timeout);                        /* 获取ATK-MS901M LED灯状态 */
-    uint8_t SetLedState(atk_ms901m_led_state_t state, uint32_t timeout);                         /* 设置ATK-MS901M LED灯状态 */
+    uint8_t SetLedState(atk_ms901m_led_state_t state);                         /* 设置ATK-MS901M LED灯状态 */
     uint8_t GetPortMode(atk_ms901m_port_t port, atk_ms901m_port_mode_t *mode, uint32_t timeout); /* 获取ATK-MS901M指定端口模式 */
-    uint8_t SetPortMode(atk_ms901m_port_t port, atk_ms901m_port_mode_t mode, uint32_t timeout);  /* 设置ATK-MS901M指定端口模式 */
+    uint8_t SetPortMode(atk_ms901m_port_t port, atk_ms901m_port_mode_t mode);  /* 设置ATK-MS901M指定端口模式 */
     uint8_t GetPortPwmPulse(atk_ms901m_port_t port, uint16_t *pulse, uint32_t timeout);          /* 获取ATK-MS901M指定端口PWM高电平的宽度 */
-    uint8_t SetPortPwmPulse(atk_ms901m_port_t port, uint16_t pulse, uint32_t timeout);           /* 设置ATK-MS901M指定端口PWM高电平的宽度 */
+    uint8_t SetPortPwmPulse(atk_ms901m_port_t port, uint16_t pulse);           /* 设置ATK-MS901M指定端口PWM高电平的宽度 */
     uint8_t GetPortPwmPeriod(atk_ms901m_port_t port, uint16_t *period, uint32_t timeout);        /* 获取ATK-MS901M指定端口PWM周期 */
-    uint8_t SetPortPwmPeriod(atk_ms901m_port_t port, uint16_t period, uint32_t timeout);         /* 设置ATK-MS901M指定端口PWM周期 */
+    uint8_t SetPortPwmPeriod(atk_ms901m_port_t port, uint16_t period);         /* 设置ATK-MS901M指定端口PWM周期 */
+    uint8_t SetBaudRate(uint8_t rate);  /* 设置ATK-MS901M串口波特率 */
+    uint8_t SaveToFlash();  /* 保存ATK-MS901M配置 */
     /**
      * @brief 小端系统协议头查找算法
      * @param data 包起始指针
@@ -261,7 +273,7 @@ private:
 
     void ImuReader();
 
-    void ReadBuffer(const uint8_t *buffer, const uint32_t length);
+    void ReadBuffer(const uint8_t *buffer, const int length);
 
     std::string Bytes2String(uint8_t *data, uint32_t len);
 };

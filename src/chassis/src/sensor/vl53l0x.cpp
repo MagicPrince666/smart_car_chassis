@@ -954,7 +954,7 @@ uint32_t VL53L0X::readRegister32Bit(uint8_t reg) {
 }
 
 void VL53L0X::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t count) {
-	uint8_t data[count];
+	uint8_t *data = new uint8_t[count];
 	int8_t p = I2Cdev::readBytes(this->address, reg, count, data);
 
 	if (p == -1) {
@@ -964,4 +964,5 @@ void VL53L0X::readRegisterMultiple(uint8_t reg, uint8_t* destination, uint8_t co
 	for (uint8_t i = 0; i < count; ++i) {
 		destination[i] = data[i];
 	}
+	delete[] data;
 }

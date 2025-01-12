@@ -19,6 +19,7 @@
 #include "mpu6050.h"
 #include "sbus.h"
 #include "socket.h"
+#include "Gamepad.hpp"
 #include "zyf176ex.h"
 
 #if defined(USE_ROS_NORTIC_VERSION) || defined(USE_ROS_MELODIC_VERSION)
@@ -188,6 +189,11 @@ void ChassisSrv::GetRemoteConfig()
         std::shared_ptr<RemoteProduct> sbus(factory->CreateRemoteProduct(config_, false));
         remote_ = sbus;
         remote_type_ = REMOTE_SBUS;
+    } else if (config_.type == "gamepad") {
+        std::unique_ptr<RemoteFactory> factory(new GamePadRemote());
+        std::shared_ptr<RemoteProduct> gamepad(factory->CreateRemoteProduct(config_, false));
+        remote_ = gamepad;
+        remote_type_ = REMOTE_KEYBOARD;
     } else if (config_.type == "socket") {
         RCLCPP_INFO(ros_node_->get_logger(), "socket remote");
         std::unique_ptr<RemoteFactory> factory(new UdpRemote());

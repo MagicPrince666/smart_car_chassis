@@ -67,6 +67,7 @@ sudo apt install ros-$ROS_DISTRO-pcl*
 ```bash
 colcon build --packages-select chassis
 colcon build --packages-select ydlidar
+colcon build --packages-select ldlidar_stl_ros2
 colcon build --packages-select fishbot_cartographer
 colcon build --packages-select fishbot_description
 ```

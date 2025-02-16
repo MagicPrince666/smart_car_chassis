@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 0 > /sys/class/pwm/pwmchip6/export
+echo 1 > /sys/class/pwm/pwmchip0/export
 echo 3 > /sys/class/pwm/pwmchip0/export
 echo 4 > /sys/class/pwm/pwmchip0/export
 

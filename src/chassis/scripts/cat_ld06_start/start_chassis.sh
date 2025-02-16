@@ -1,9 +1,9 @@
 #!/bin/bash
 
-source /opt/ros/humble/setup.bash
-source /home/cat/linux-car/install/setup.bash
+source /opt/ros/foxy/setup.bash
+source /home/cat/smart_car_chassis/install/setup.bash
 
-echo "temppwd" | sudo -S /home/cat/linux-car/src/chassis/scripts/luban_cat_ackerman_setup.sh
+echo "temppwd" | sudo -S /home/cat/smart_car_chassis/src/chassis/scripts/luban_cat_ackerman_setup.sh
 
 processNum=`ps -ef | grep chassis_node | grep -v grep | wc -l`
 

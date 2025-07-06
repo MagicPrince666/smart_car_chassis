@@ -209,12 +209,12 @@ bool Gamepad::Request(struct RemoteState &data)
             close(js_fd_);
             js_fd_ = -1;
             rc_data_.lose_signal = true;
+            rc_data_.adslx = 0.5;
+            rc_data_.adsly = 0.5;
+            rc_data_.adsrx = 0.5;
+            rc_data_.adsry = 0.5;
         }
         data = rc_data_;
-        data.adslx = 0.5;
-        data.adsly = 0.5;
-        data.adsrx = 0.5;
-        data.adsry = 0.5;
     } else {
         Init();
         data.lose_signal = true;

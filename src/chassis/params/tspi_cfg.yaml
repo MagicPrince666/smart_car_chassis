@@ -13,9 +13,9 @@
         line: 3
     remote:
       # 遥控类型 sbus/gamepad/keyboard/socket/sonnyps2
-      type: "socket"
+      type: "gamepad"
       # 端口
-      port: "0.0.0.0"
+      port: "/dev/input/js0"
       # 波特率
       baudrate: 100000
       # 1帧数据长度
@@ -89,8 +89,8 @@
     video_device:
       # 直播开关
       live_video: false
-      dev: "/dev/video1"
-      format: "YUV"
-      width: 640
-      height: 480
+      dev: "/dev/video2"
+      format: "H264"
+      width: 1280
+      height: 720
       fps: 30

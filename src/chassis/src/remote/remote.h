@@ -31,10 +31,10 @@ struct RemoteState {
     bool quadrilateral = false; // 四边形按钮
     bool rotundity     = false; // 园形按钮
     bool fork          = false; // 叉按钮
-    float adslx        = 0.5;   // 左摇杆x轴
-    float adsly        = 0.5;   // 左摇杆y轴
-    float adsrx        = 0.5;   // 右摇杆x轴
-    float adsry        = 0.5;   // 右摇杆y轴
+    float adslx        = 0.0;   // 左摇杆x轴
+    float adsly        = 0.0;   // 左摇杆y轴
+    float adsrx        = 0.0;   // 右摇杆x轴
+    float adsry        = 0.0;   // 右摇杆y轴
     float ads[12]    = {0};   // 扩展通道 sbus 16路通道都是模拟量
 };
 

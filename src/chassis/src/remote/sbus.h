@@ -38,6 +38,7 @@ private:
     RcData_t rc_data_;
     std::mutex data_lock_;
     uint64_t last_update_time_;
+    float midle_value_;
 
     struct {
         uint8_t rx_buffer[256];

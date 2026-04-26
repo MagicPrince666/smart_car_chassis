@@ -34,10 +34,10 @@
       chip: "Two-wheel"
       bts7960_lis: -1
       bts7960_ris": -1
-      moto1_ena: "moto1-ena"
-      moto1_enb: "moto1-enb"
-      moto2_ena: "moto2-ena"
-      moto2_enb: "moto2-enb"
+      moto1_ena: "moto1-enb"
+      moto1_enb: "moto1-ena"
+      moto2_ena: "moto2-enb"
+      moto2_enb: "moto2-ena"
       lidar_pwm:
         chip: 3
         channel: 0

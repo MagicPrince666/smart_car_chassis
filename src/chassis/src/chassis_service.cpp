@@ -559,7 +559,7 @@ void ChassisSrv::LoopCallback()
         }
     }
 
-    float vspeed = (1 - 2.0 * rc_data_.adsry) * config_.max_x_vel; // 右摇杆y轴 线速度
+    float vspeed = rc_data_.adsry * config_.max_x_vel; // 右摇杆y轴 线速度
     if (rc_data_.lose_signal) {
         vspeed = 0.0;
     }
@@ -580,10 +580,10 @@ void ChassisSrv::LoopCallback()
     }
 
     if (car_is_ackerman_) {
-        float angle = (1 - 2.0 * rc_data_.adsrx) * config_.max_angle; // 右摇杆x轴 转向角度
+        float angle = rc_data_.adsrx * config_.max_angle; // 右摇杆x轴 转向角度
         motion_ctl_->DriverCtrl(vspeed, angle);
     } else {
-        float angle = (1 - 2.0 * rc_data_.adsrx) * config_.max_w_vel; // 右摇杆x轴 角速度
+        float angle = rc_data_.adsrx * config_.max_w_vel; // 右摇杆x轴 角速度
         if (angle > -0.01 && angle < 0.01) {
             angle = 0.0;
         }

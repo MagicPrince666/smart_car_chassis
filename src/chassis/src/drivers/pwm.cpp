@@ -12,6 +12,44 @@
 
 #include "pwm.h"
 
+// 辅助函数：尝试写入PWM属性，支持权限重试
+int WritePwmWithRetry(const char* path, const char* value) {
+    const int maxRetries = 5;
+    const int retryDelayMs = 10;
+    
+    for (int retry = 0; retry < maxRetries; retry++) {
+        FILE* fp = fopen(path, "w");
+        if (fp == nullptr) {
+            if (errno == EACCES || errno == EPERM) {
+                // 权限不足，等待后重试
+                usleep(retryDelayMs * 1000);  // 转换为微秒
+                continue;
+            }
+            printf("open %s error: %s\n", path, strerror(errno));
+            return -1;
+        }
+        
+        int written = fprintf(fp, "%s", value);
+        fclose(fp);
+        
+        if (written < 0) {
+            printf("write %s error: %s\n", path, strerror(errno));
+            return -1;
+        }
+        return 0;  // 成功写入
+    }
+    
+    printf("Failed to write %s after %d retries: permission denied\n", path, maxRetries);
+    return -1;
+}
+
+// 重载：用于写入数值
+int WritePwmWithRetry(const char* path, int value) {
+    char buf[32];
+    snprintf(buf, sizeof(buf), "%d", value);
+    return WritePwmWithRetry(path, buf);
+}
+
 Pwm::Pwm(PwmPram parm) {
     pwm_chip_ = parm.chip;
     pwm_channel_ = parm.channel;
@@ -66,20 +104,11 @@ int Pwm::PwmEnable(bool enable)
     char setpin[64] = {0};
     int len = snprintf(setpin, sizeof(setpin) - 1, "/sys/class/pwm/pwmchip%d/pwm%d/enable", pwm_chip_, pwm_channel_);
     setpin[len] = 0;
-    FILE *set_enable = fopen(setpin, "w");
-    if (set_enable == nullptr) {
-        printf("open %s error\n", setpin);
-        return -1;
-    } else {
-        std::cout << "Open " << setpin << std::endl;
-        if(enable) {
-            fprintf(set_enable, "1");
-        } else {
-            fprintf(set_enable, "0");
-        }
-    }
-    fclose(set_enable);
-    return 0;
+    
+    std::cout << "Open " << setpin << std::endl;
+    
+    const char* value = enable ? "1" : "0";
+    return WritePwmWithRetry(setpin, value);
 }
 
 int Pwm::PwmPolarity(bool value)
@@ -87,20 +116,11 @@ int Pwm::PwmPolarity(bool value)
     char setpin[64] = {0};
     int len = snprintf(setpin, sizeof(setpin) - 1, "/sys/class/pwm/pwmchip%d/pwm%d/polarity", pwm_chip_, pwm_channel_);
     setpin[len] = 0;
-    FILE *set_polarity = fopen(setpin, "w");
-    if (set_polarity == nullptr) {
-        printf("open %s error\n", setpin);
-        return -1;
-    } else {
-        std::cout << "Open " << setpin << std::endl;
-        if (value) {
-            fprintf(set_polarity, "normal");
-        } else {
-            fprintf(set_polarity, "inversed");
-        }
-    }
-    fclose(set_polarity);
-    return 0;
+    
+    std::cout << "Open " << setpin << std::endl;
+    
+    const char* polarity = value ? "normal" : "inversed";
+    return WritePwmWithRetry(setpin, polarity);
 }
 
 int Pwm::PwmPeriod(uint32_t value)
@@ -108,15 +128,8 @@ int Pwm::PwmPeriod(uint32_t value)
     char setpin[64] = {0};
     int len = snprintf(setpin, sizeof(setpin) - 1, "/sys/class/pwm/pwmchip%d/pwm%d/period", pwm_chip_, pwm_channel_);
     setpin[len] = 0;
-    FILE *set_period = fopen(setpin, "w");
-    if (set_period == nullptr) {
-        printf("open %s error\n", setpin);
-        return -1;
-    } else {
-        fprintf(set_period, "%d", value);
-    }
-    fclose(set_period);
-    return 0;
+    
+    return WritePwmWithRetry(setpin, (int)value);
 }
 
 int Pwm::PwmDutyCycle(uint32_t value)
@@ -124,13 +137,6 @@ int Pwm::PwmDutyCycle(uint32_t value)
     char setpin[64] = {0};
     int len = snprintf(setpin, sizeof(setpin) - 1, "/sys/class/pwm/pwmchip%d/pwm%d/duty_cycle", pwm_chip_, pwm_channel_);
     setpin[len] = 0;
-    FILE *set_duty_cycle = fopen(setpin, "w");
-    if (set_duty_cycle == nullptr) {
-        printf("open %s error\n", setpin);
-        return -1;
-    } else {
-        fprintf(set_duty_cycle, "%d", value);
-    }
-    fclose(set_duty_cycle);
-    return 0;
+    
+    return WritePwmWithRetry(setpin, (int)value);
 }

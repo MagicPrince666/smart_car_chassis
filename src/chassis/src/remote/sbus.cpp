@@ -23,6 +23,7 @@ Sbus::Sbus(RemoteConfig_t config, bool debug) : RemoteProduct(config, debug)
 {
     std::cout << "Sbus init with " << config_.port << std::endl;
     sbus_fd_ = -1;
+    midle_value_ = (config_.joy_var_max + config_.joy_var_min) / 2; // 中值
     Init();
 }
 
@@ -178,10 +179,10 @@ bool Sbus::Request(struct RemoteState &data)
     memset((int8_t *)&data, 0, sizeof(data));
     std::lock_guard<std::mutex> mylock_guard(data_lock_);
     if (!rc_data_.flag_refresh) {
-        data.adslx = 0.5;
-        data.adsly = 0.5;
-        data.adsrx = 0.5;
-        data.adsry = 0.5;
+        data.adslx = 0.0;
+        data.adsly = 0.0;
+        data.adsrx = 0.0;
+        data.adsry = 0.0;
         return false;
     }
     uint64_t current  = Utils::GetCurrentMsTime();
@@ -191,16 +192,16 @@ bool Sbus::Request(struct RemoteState &data)
         rc_data_.lost_signed = false;
     }
     data.lose_signal = rc_data_.lost_signed; // 失控标识
-    data.adslx       = rc_data_.percent[3];   // 左摇杆x轴
-    data.adsly       = rc_data_.percent[2];   // 左摇杆y轴
-    data.adsrx       = rc_data_.percent[0];   // 右摇杆x轴
-    data.adsry       = rc_data_.percent[1];   // 右摇杆y轴
-    data.ads[0]      = rc_data_.percent[4];   // 5通道 遥控C拨杆开关
-    data.ads[1]      = rc_data_.percent[5];   // 6通道 遥控左旋钮
-    data.ads[2]      = rc_data_.percent[6];   // 7通道 左后方拨杆
-    data.ads[3]      = rc_data_.percent[7];   // 8通道 遥控右旋钮
-    data.ads[4]      = rc_data_.percent[8];   // 9通道 遥控B拨杆开关
-    data.ads[5]      = rc_data_.percent[9];   // 10通道 遥控A拨杆开关
+    data.adslx       = (rc_data_.percent[3] - midle_value_) / midle_value_;   // 左摇杆x轴
+    data.adsly       = (rc_data_.percent[2] - midle_value_) / midle_value_;   // 左摇杆y轴
+    data.adsrx       = (rc_data_.percent[0] - midle_value_) / midle_value_;   // 右摇杆x轴
+    data.adsry       = (rc_data_.percent[1] - midle_value_) / midle_value_;   // 右摇杆y轴
+    data.ads[0]      = (rc_data_.percent[4] - midle_value_) / midle_value_;   // 5通道 遥控C拨杆开关
+    data.ads[1]      = (rc_data_.percent[5] - midle_value_) / midle_value_;   // 6通道 遥控左旋钮
+    data.ads[2]      = (rc_data_.percent[6] - midle_value_) / midle_value_;   // 7通道 左后方拨杆
+    data.ads[3]      = (rc_data_.percent[7] - midle_value_) / midle_value_;   // 8通道 遥控右旋钮
+    data.ads[4]      = (rc_data_.percent[8] - midle_value_) / midle_value_;   // 9通道 遥控B拨杆开关
+    data.ads[5]      = (rc_data_.percent[9] - midle_value_) / midle_value_;   // 10通道 遥控A拨杆开关
     return true;
 }
 

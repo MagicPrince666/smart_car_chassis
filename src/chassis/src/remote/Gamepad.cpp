@@ -163,16 +163,16 @@ int Gamepad::ReadJoystick(void)
                 break;
 
             case ADS_LX:
-                rc_data_.adslx = (float)(event.value + 32767) / 65536.0; // 左摇杆x轴
+                rc_data_.adslx = (float)(event.value) / 32767.0; // 左摇杆x轴
                 break;
             case ADS_LY:
-                rc_data_.adsly = (float)(event.value + 32767) / 65536.0; // 左摇杆y轴
+                rc_data_.adsly = (float)(event.value) / 32767.0; // 左摇杆y轴
                 break;
             case ADS_RX:
-                rc_data_.adsrx = (float)(event.value + 32767) / 65536.0; // 右摇杆x轴
+                rc_data_.adsrx = (float)(event.value) / 32767.0; // 右摇杆x轴
                 break;
             case ADS_RY:
-                rc_data_.adsry = (float)(event.value + 32767) / 65536.0; // 右摇杆y轴
+                rc_data_.adsry = (float)(event.value) / 32767.0; // 右摇杆y轴
                 break;
             default:
                 break;
@@ -191,10 +191,10 @@ int Gamepad::ReadJoystick(void)
             js_fd_ = -1;
         }
         rc_data_.lose_signal = true;
-        rc_data_.adslx = 0.5;
-        rc_data_.adsly = 0.5;
-        rc_data_.adsrx = 0.5;
-        rc_data_.adsry = 0.5;
+        rc_data_.adslx = 0.0;
+        rc_data_.adsly = 0.0;
+        rc_data_.adsrx = 0.0;
+        rc_data_.adsry = 0.0;
     }
     return ret;
 }
@@ -209,19 +209,19 @@ bool Gamepad::Request(struct RemoteState &data)
             close(js_fd_);
             js_fd_ = -1;
             rc_data_.lose_signal = true;
-            rc_data_.adslx = 0.5;
-            rc_data_.adsly = 0.5;
-            rc_data_.adsrx = 0.5;
-            rc_data_.adsry = 0.5;
+            rc_data_.adslx = 0.0;
+            rc_data_.adsly = 0.0;
+            rc_data_.adsrx = 0.0;
+            rc_data_.adsry = 0.0;
         }
         data = rc_data_;
     } else {
         Init();
         data.lose_signal = true;
-        data.adslx = 0.5;
-        data.adsly = 0.5;
-        data.adsrx = 0.5;
-        data.adsry = 0.5;
+        data.adslx = 0.0;
+        data.adsly = 0.0;
+        data.adsrx = 0.0;
+        data.adsry = 0.0;
         return false;
     }
     return true;

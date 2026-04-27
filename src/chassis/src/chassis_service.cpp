@@ -530,7 +530,7 @@ void ChassisSrv::LoopCallback()
             return;
         }
 
-        if (rc_data_.ads[4] > 0.5) { // 使能开关
+        if (rc_data_.ads[4] > 0.0) { // 使能开关
             motion_ctl_->DriverCtrl(0.0, 0.0);
             if (driver_enable_) {
                 driver_enable_ = false;
@@ -544,7 +544,7 @@ void ChassisSrv::LoopCallback()
             }
         }
 
-        if (rc_data_.ads[5] > 0.5) { // 避障开关
+        if (rc_data_.ads[5] > 0.0) { // 避障开关
             font_dis = 1000;
             back_dis = 1000;
             if (avoid_obstacles_) {

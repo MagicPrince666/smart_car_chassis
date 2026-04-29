@@ -50,7 +50,7 @@ std::string Utils::ScanInputDevice(std::string name)
 {
     std::string device = "";
     if(!name.empty()) { //扫描设备
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < 20; i++) {
             std::string filename = "/sys/class/input/event" + std::to_string(i) + "/device/name";
             // std::cout << "iio bus name" << filename << std::endl;
             struct stat buffer;   

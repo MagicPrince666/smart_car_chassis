@@ -524,12 +524,6 @@ void ChassisSrv::LoopCallback()
     }
 
     if (remote_type_ == REMOTE_SBUS) {
-        if (!rc_data_.adslx || !rc_data_.adsly || !rc_data_.adsrx || !rc_data_.adsry) {
-            RCLCPP_WARN(ros_node_->get_logger(), "Driver lx = %f, ly = %f, rx = %f, ry = %f",
-                        rc_data_.adslx, rc_data_.adsly, rc_data_.adsrx, rc_data_.adsry);
-            return;
-        }
-
         if (rc_data_.ads[4] > 0.01) { // 使能开关
             motion_ctl_->DriverCtrl(0.0, 0.0);
             if (driver_enable_) {

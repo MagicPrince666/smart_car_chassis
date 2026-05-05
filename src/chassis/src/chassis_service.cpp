@@ -524,13 +524,15 @@ void ChassisSrv::LoopCallback()
     }
 
     if (remote_type_ == REMOTE_SBUS) {
-        if (rc_data_.ads[4] > 0.01) { // 使能开关
-            motion_ctl_->DriverCtrl(0.0, 0.0);
+        // RCLCPP_INFO(ros_node_->get_logger(), "Driver lx = %f, ly = %f, rx = %f, ry = %f",
+        //                 rc_data_.adslx, rc_data_.adsly, rc_data_.adsrx, rc_data_.adsry);
+        if (rc_data_.ads[4] > 0.1) { // 使能开关
             if (driver_enable_) {
                 driver_enable_ = false;
                 RCLCPP_WARN(ros_node_->get_logger(), "Driver disable");
             }
-            return;
+            rc_data_.adsly = 0.0;
+            rc_data_.adsry = 0.0;
         } else {
             if (!driver_enable_) {
                 driver_enable_ = true;
@@ -538,7 +540,7 @@ void ChassisSrv::LoopCallback()
             }
         }
 
-        if (rc_data_.ads[5] > 0.01) { // 避障开关
+        if (rc_data_.ads[5] > 0.1) { // 避障开关
             font_dis = 1000;
             back_dis = 1000;
             if (avoid_obstacles_) {

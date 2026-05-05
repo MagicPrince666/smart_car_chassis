@@ -163,16 +163,16 @@ int Gamepad::ReadJoystick(void)
                 break;
 
             case ADS_LX:
-                rc_data_.adslx = (float)(event.value) / 32767.0; // 左摇杆x轴
+                rc_data_.adslx = (float)(event.value) / -32767.0; // 左摇杆x轴
                 break;
             case ADS_LY:
-                rc_data_.adsly = (float)(event.value) / 32767.0; // 左摇杆y轴
+                rc_data_.adsly = (float)(event.value) / -32767.0; // 左摇杆y轴
                 break;
             case ADS_RX:
-                rc_data_.adsrx = (float)(event.value) / 32767.0; // 右摇杆x轴
+                rc_data_.adsrx = (float)(event.value) / -32767.0; // 右摇杆x轴
                 break;
             case ADS_RY:
-                rc_data_.adsry = (float)(event.value) / 32767.0; // 右摇杆y轴
+                rc_data_.adsry = (float)(event.value) / -32767.0; // 右摇杆y轴
                 break;
             default:
                 break;

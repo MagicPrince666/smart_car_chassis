@@ -192,16 +192,16 @@ bool Sbus::Request(struct RemoteState &data)
         rc_data_.lost_signed = false;
     }
     data.lose_signal = rc_data_.lost_signed; // 失控标识
-    data.adslx       = (rc_data_.percent[3] - midle_value_) / midle_value_;   // 左摇杆x轴
-    data.adsly       = (rc_data_.percent[2] - midle_value_) / midle_value_;   // 左摇杆y轴
-    data.adsrx       = (rc_data_.percent[0] - midle_value_) / midle_value_;   // 右摇杆x轴
-    data.adsry       = (rc_data_.percent[1] - midle_value_) / midle_value_;   // 右摇杆y轴
-    data.ads[0]      = (rc_data_.percent[4] - midle_value_) / midle_value_;   // 5通道 遥控C拨杆开关
-    data.ads[1]      = (rc_data_.percent[5] - midle_value_) / midle_value_;   // 6通道 遥控左旋钮
-    data.ads[2]      = (rc_data_.percent[6] - midle_value_) / midle_value_;   // 7通道 左后方拨杆
-    data.ads[3]      = (rc_data_.percent[7] - midle_value_) / midle_value_;   // 8通道 遥控右旋钮
-    data.ads[4]      = (rc_data_.percent[8] - midle_value_) / midle_value_;   // 9通道 遥控B拨杆开关
-    data.ads[5]      = (rc_data_.percent[9] - midle_value_) / midle_value_;   // 10通道 遥控A拨杆开关
+    data.adslx       = (float)(0.5 - rc_data_.percent[3]) / 0.5;   // 左摇杆x轴
+    data.adsly       = (float)(rc_data_.percent[2] - 0.5) / 0.5;   // 左摇杆y轴
+    data.adsrx       = (float)(0.5 - rc_data_.percent[0]) / 0.5;   // 右摇杆x轴
+    data.adsry       = (float)(0.5 - rc_data_.percent[1]) / 0.5;   // 右摇杆y轴
+    data.ads[0]      = (float)(rc_data_.percent[4] - 0.5) / 0.5;   // 5通道 遥控C拨杆开关
+    data.ads[1]      = (float)(rc_data_.percent[5] - 0.5) / 0.5;   // 6通道 遥控左旋钮
+    data.ads[2]      = (float)(0.5 - rc_data_.percent[6]) / 0.5;   // 7通道 左后方拨杆
+    data.ads[3]      = (float)(rc_data_.percent[7] - 0.5) / 0.5;   // 8通道 遥控右旋钮
+    data.ads[4]      = (float)(rc_data_.percent[8] - 0.5) / 0.5;   // 9通道 遥控B拨杆开关
+    data.ads[5]      = (float)(0.5 - rc_data_.percent[9]) / 0.5;   // 10通道 遥控A拨杆开关
     return true;
 }
 

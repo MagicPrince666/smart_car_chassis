@@ -3,7 +3,7 @@
 source /opt/ros/foxy/setup.bash
 source /home/tspi/smart_car_chassis/install/setup.bash
 
-echo "i2ctech" | sudo -S /home/tspi/smart_car_chassis/src/chassis/scripts/tspi_two_wheel_setup.sh
+echo "admin1234." | sudo -S /home/tspi/smart_car_chassis/src/chassis/scripts/tspi_two_wheel_setup.sh
 
 processNum=`ps -ef | grep chassis_node | grep -v grep | wc -l`
 

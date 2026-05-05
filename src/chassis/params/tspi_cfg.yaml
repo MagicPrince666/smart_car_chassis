@@ -39,19 +39,19 @@
       moto2_ena: "moto2-ena"
       moto2_enb: "moto2-enb"
       lidar_pwm:
-        chip: 1
+        chip: 8
         channel: 0
         polarity: true
         period: 33333
         dutycycle: 16666
       moto_pwm_left: 
-        chip: 4
+        chip: 15
         channel: 0
         polarity: true
         period: 40000
         dutycycle: 0
       moto_pwm_right:
-        chip: 3
+        chip: 14
         channel: 0
         polarity: true
         period: 40000

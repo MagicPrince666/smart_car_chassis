@@ -531,7 +531,7 @@ void ChassisSrv::LoopCallback()
                 driver_enable_ = false;
                 RCLCPP_WARN(ros_node_->get_logger(), "Driver disable");
             }
-            rc_data_.adsly = 0.0;
+            rc_data_.adsrx = 0.0;
             rc_data_.adsry = 0.0;
         } else {
             if (!driver_enable_) {
